@@ -1,10 +1,15 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/core/const/image_path.dart';
+import 'package:prettyrini/core/controller/theme_controller.dart';
 
-Widget buildAppBar(String username) {
+Widget buildAppBar(String username, {required Color textColor}) {
+  final ThemeController themeController = Get.find<ThemeController>();
+  final bool isDarkMode = themeController.isDarkMode;
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 16),
     child: Row(
@@ -13,11 +18,11 @@ Widget buildAppBar(String username) {
         Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 56.w,
+              height: 56.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.2),
+                color: textColor.withOpacity(0.2),
               ),
               child: Image.asset(ImagePath.profile),
             ),
@@ -28,14 +33,15 @@ Widget buildAppBar(String username) {
                 Text(
                   "Welcome",
                   style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 18.sp,
+                    color: textColor,
+                    fontSize: 13.sp,
                   ),
                 ),
+                SizedBox(height: 5.h),
                 Text(
                   username,
                   style: GoogleFonts.poppins(
-                    color: Colors.white,
+                    color: textColor,
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
                   ),
@@ -46,27 +52,41 @@ Widget buildAppBar(String username) {
         ),
         Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.grey.shade800),
+            CircleAvatar(
+              radius: 30.r,
+              backgroundColor: isDarkMode
+                  ? Color(0xFF0E8898).withValues(alpha: 0.05)
+                  : Color(0xFF0E8898).withValues(alpha: 0.05),
               child: IconButton(
-                icon: const Icon(
+                icon: Icon(
+                  size: 30.r,
                   Icons.search,
-                  color: Colors.white,
+                  color: isDarkMode ? Colors.white : Colors.black,
                 ),
                 onPressed: () {},
               ),
             ),
-            SizedBox(
-              width: 10,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Colors.grey.shade800),
+            const SizedBox(width: 10),
+            // Container(
+            //   decoration: BoxDecoration(
+            //     shape: BoxShape.circle,
+            //     color: textColor.withOpacity(0.1),
+            //   ),
+            //   child: IconButton(
+            //     icon: Icon(Icons.notifications_outlined, color: textColor),
+            //     onPressed: () {},
+            //   ),
+            // ),
+            CircleAvatar(
+              radius: 30.r,
+              backgroundColor: isDarkMode
+                  ? Color(0xFF0E8898).withValues(alpha: 0.05)
+                  : Color(0xFF0E8898).withValues(alpha: 0.05),
               child: IconButton(
-                icon: const Icon(
+                icon: Icon(
+                  size: 30.r,
                   Icons.notifications_outlined,
-                  color: Colors.white,
+                  color: isDarkMode ? Colors.white : Colors.black,
                 ),
                 onPressed: () {},
               ),

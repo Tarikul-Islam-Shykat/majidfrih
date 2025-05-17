@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,9 +20,12 @@ class SettingsMenuItem extends StatelessWidget {
   final Color? iconColor;
   final Color? textColor;
   final Color? backgroundColor;
+  final Color? activeColor;
+  final Color? activeTrackColor;
+  final Color? inactiveTrackColor;
 
   const SettingsMenuItem({
-    Key? key,
+    super.key,
     required this.icon,
     required this.text,
     this.onTap,
@@ -30,40 +35,47 @@ class SettingsMenuItem extends StatelessWidget {
     this.iconColor,
     this.textColor,
     this.backgroundColor,
-  }) : super(key: key);
+    this.activeColor,
+    this.activeTrackColor,
+    this.inactiveTrackColor,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Use provided colors or defaults
-    final bgColor = backgroundColor ?? const Color(0xFF1C1C1E);
-    final txtColor = itemType == SettingsItemType.danger
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    final Color containerColor = backgroundColor ??
+        (isDarkMode
+            ? const Color(0xFF0E8898).withValues(alpha: 0.05)
+            : const Color(0xFF0E8898).withValues(alpha: 0.05));
+
+    final Color txtColor = itemType == SettingsItemType.danger
         ? Colors.red
-        : (textColor ?? Colors.white);
-    final icnColor = itemType == SettingsItemType.danger
+        : (textColor ?? (isDarkMode ? Colors.white : Colors.black));
+
+    final Color icnColor = itemType == SettingsItemType.danger
         ? Colors.red
-        : (iconColor ?? Colors.white);
+        : (iconColor ?? (isDarkMode ? Colors.white : Colors.black));
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 2.h),
+      padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 8.h),
       child: InkWell(
         onTap: itemType == SettingsItemType.toggle ? null : onTap,
+        borderRadius: BorderRadius.circular(8.r),
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
           decoration: BoxDecoration(
-            color: bgColor,
+            color: containerColor,
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Row(
             children: [
-              // Icon section
               Icon(
                 icon,
                 color: icnColor,
                 size: 22.sp,
               ),
               SizedBox(width: 14.w),
-
-              // Text section
               Expanded(
                 child: Text(
                   text,
@@ -73,13 +85,25 @@ class SettingsMenuItem extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Toggle switch or arrow indicator
               if (itemType == SettingsItemType.toggle)
                 Switch(
                   value: toggleValue,
                   onChanged: onToggleChanged,
-                  activeColor: Theme.of(context).primaryColor,
+                  thumbColor:
+                      MaterialStateProperty.resolveWith<Color>((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      // switch on (toggle on)
+                      return isDarkMode ? Color(0xFF0E8898) : Colors.white;
+                    }
+                    return isDarkMode ? Colors.white : Color(0xFF0E8898);
+                  }),
+                  trackColor:
+                      MaterialStateProperty.resolveWith<Color>((states) {
+                    if (states.contains(MaterialState.selected)) {
+                      return isDarkMode ? Colors.white : Color(0xFF0E8898);
+                    }
+                    return isDarkMode ? Colors.white : Colors.black;
+                  }),
                 )
               else if (itemType == SettingsItemType.normal)
                 Icon(

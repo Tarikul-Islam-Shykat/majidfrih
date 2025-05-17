@@ -1,6 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:prettyrini/core/controller/theme_controller.dart';
+import 'package:prettyrini/feature/chatbox/chat_list.dart';
 import 'package:prettyrini/feature/dashboard/controller/navigation_controller.dart';
 import 'package:prettyrini/feature/home/ui/product_home_screen.dart';
 import 'package:prettyrini/feature/post/ui/post_ui.dart';
@@ -9,10 +13,12 @@ import 'package:prettyrini/feature/profile/profile_screen.dart';
 // Navigation Controller
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({Key? key}) : super(key: key);
+  const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final ThemeController themeController = Get.find<ThemeController>();
+    final isDarkMode = themeController.isDarkMode;
     // Initialize the controller
     final NavigationController navController = Get.put(NavigationController());
 
@@ -20,7 +26,7 @@ class DashboardScreen extends StatelessWidget {
     final List<Widget> screens = [
       ProductHomeScreen(),
       PostScreen(),
-      const ChatContent(),
+      ChatScreen(),
       ProfileScreen(),
     ];
 
@@ -70,7 +76,9 @@ class DashboardScreen extends StatelessWidget {
                     height: 80,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.2),
+                      color: isDarkMode
+                          ? Color(0xFF0E8898).withValues(alpha: 0.05)
+                          : Colors.black, // Bottom NavBar er jonno
                       //borderRadius: BorderRadius.circular(30),
                       border: Border.all(
                         color: Colors.white.withOpacity(0.1),
@@ -80,14 +88,38 @@ class DashboardScreen extends StatelessWidget {
                     child: Obx(() => Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            _buildNavItem(0, Icons.home, 'Home', Colors.teal,
+                            _buildNavItem(
+                                0,
+                                Icons.home,
+                                'Home',
+                                isDarkMode
+                                    ? Color(0xFF0E8898)
+                                    : Color(0xFF0E8898),
                                 navController),
-                            _buildNavItem(1, Icons.add_box, 'Add', Colors.white,
+                            _buildNavItem(
+                                1,
+                                Icons.add_box,
+                                'Add',
+                                isDarkMode
+                                    ? Color(0xFF0E8898)
+                                    : Color(0xFF0E8898),
                                 navController),
-                            _buildNavItem(2, Icons.chat_bubble, 'Chat',
-                                Colors.white, navController),
-                            _buildNavItem(3, Icons.person, 'Profile',
-                                Colors.white, navController),
+                            _buildNavItem(
+                                2,
+                                Icons.chat_bubble,
+                                'Chat',
+                                isDarkMode
+                                    ? Color(0xFF0E8898)
+                                    : Color(0xFF0E8898),
+                                navController),
+                            _buildNavItem(
+                                3,
+                                Icons.person,
+                                'Profile',
+                                isDarkMode
+                                    ? Color(0xFF0E8898)
+                                    : Color(0xFF0E8898),
+                                navController),
                           ],
                         )),
                   ),
@@ -102,6 +134,8 @@ class DashboardScreen extends StatelessWidget {
 
   Widget _buildNavItem(int index, IconData iconData, String label,
       Color iconColor, NavigationController controller) {
+    final ThemeController themeController = Get.find<ThemeController>();
+    final isDarkMode = themeController.isDarkMode;
     bool isSelected = controller.selectedIndex.value == index;
     return InkWell(
       onTap: () => controller.changeTab(index),
@@ -109,7 +143,8 @@ class DashboardScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
         decoration: isSelected
             ? BoxDecoration(
-                color: Colors.black,
+                color: isDarkMode ? Colors.black : Colors.white,
+                // color: isDarkMode ? Colors.black : Color(0xFFFFFFFF),
                 borderRadius: BorderRadius.circular(40),
               )
             : null,
@@ -216,7 +251,7 @@ class HomeContent extends StatelessWidget {
 }
 
 class AddContent extends StatelessWidget {
-  const AddContent({Key? key}) : super(key: key);
+  const AddContent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -240,30 +275,30 @@ class AddContent extends StatelessWidget {
   }
 }
 
-class ChatContent extends StatelessWidget {
-  const ChatContent({Key? key}) : super(key: key);
+// class ChatContent extends StatelessWidget {
+//   const ChatContent({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.chat_bubble_outline,
-            size: 100,
-            color: Colors.white.withOpacity(0.8),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Chats',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Icon(
+//             Icons.chat_bubble_outline,
+//             size: 100,
+//             color: Colors.white.withOpacity(0.8),
+//           ),
+//           const SizedBox(height: 20),
+//           Text(
+//             'Chats',
+//             style: Theme.of(context).textTheme.headlineSmall,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class ProfileContent extends StatelessWidget {
   const ProfileContent({Key? key}) : super(key: key);

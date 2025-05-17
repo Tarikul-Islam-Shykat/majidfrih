@@ -1,41 +1,62 @@
-// lib/controllers/product_controller.dart
+import 'dart:developer';
 
-import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/feature/home/model/product_model.dart';
 
 class ProductController extends GetxController {
   var products = <Product>[].obs;
+  List<Product> allNearbyProducts = [];
   var nearbyProducts = <Product>[].obs;
+  var filteredNearbyProducts = <Product>[].obs;
   var isLoading = false.obs;
   var favorites = <Product>[].obs;
+  var searchQuery = ''.obs;
 
   @override
   void onInit() {
     super.onInit();
+    searchQuery.listen((query) {
+      filterNearbyProducts(query);
+    });
+
     fetchProducts();
   }
 
   void fetchProducts() async {
     try {
       isLoading(true);
-      // Simulating API call with dummy data
-      await Future.delayed(Duration(milliseconds: 800));
-
-      // Loading dummy JSON data
+      await Future.delayed(const Duration(milliseconds: 800));
       final List<Product> loadedProducts = dummyProductsData
           .map((productData) => Product.fromJson(productData))
           .toList();
 
       products.value = loadedProducts;
-      nearbyProducts.value =
-          loadedProducts.where((p) => p.id % 2 == 0).toList(); // Just for demo
+      allNearbyProducts = loadedProducts.where((p) => p.id % 2 == 0).toList();
+      nearbyProducts.value = List<Product>.from(allNearbyProducts);
+      filteredNearbyProducts.value = List<Product>.from(allNearbyProducts);
     } catch (e) {
-      print('Error while fetching products: $e');
+      log('Error while fetching products: $e');
     } finally {
       isLoading(false);
     }
+  }
+
+  void filterNearbyProducts(String query) {
+    if (query.isEmpty) {
+      filteredNearbyProducts.value = List<Product>.from(nearbyProducts);
+    } else {
+      filteredNearbyProducts.value = nearbyProducts
+          .where((product) =>
+              product.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+  }
+
+  void resetNearbyProducts() {
+    nearbyProducts.value = List<Product>.from(allNearbyProducts);
+    filteredNearbyProducts.value = List<Product>.from(allNearbyProducts);
+    searchQuery.value = '';
   }
 
   void toggleFavorite(int id) {
@@ -61,7 +82,7 @@ class ProductController extends GetxController {
           'description':
               'Scopri il nostro nuovo prodotto CBD! Realizzato con ingredienti naturali, offre un\'esperienza rilassante e benefica. Perfetto per chi cerca un modo per alleviare lo stress e migliorare il benessere generale.',
           'categories': ['Medicine', 'Natural'],
-          'isFavorite': false
+          'isFavorite': false,
         },
         {
           'id': 2,
@@ -71,7 +92,7 @@ class ProductController extends GetxController {
           'description':
               'Premium quality guitar pick made from durable materials. Perfect for professional musicians and beginners alike.',
           'categories': ['Music', 'Accessories'],
-          'isFavorite': false
+          'isFavorite': false,
         },
         {
           'id': 3,
@@ -81,7 +102,7 @@ class ProductController extends GetxController {
           'description':
               'Complete wellness pack featuring our premium CBD formula. Helps reduce anxiety and promotes better sleep.',
           'categories': ['Medicine', 'Natural', 'Wellness'],
-          'isFavorite': false
+          'isFavorite': false,
         },
         {
           'id': 4,
@@ -91,7 +112,7 @@ class ProductController extends GetxController {
           'description':
               'Specially designed pick for electric guitars. Provides superior grip and control for your performances.',
           'categories': ['Music', 'Professional'],
-          'isFavorite': false
+          'isFavorite': false,
         },
         {
           'id': 5,

@@ -11,16 +11,18 @@ import 'package:prettyrini/feature/home/model/product_model.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onTap;
+  final bool isDarkMode; // ADD THIS
 
   const ProductCard({
     Key? key,
     required this.product,
     this.onTap,
+    required this.isDarkMode, // ADD THIS
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final ProductController productController = Get.find<ProductController>();
+    final Color textColor = isDarkMode ? Colors.white : Colors.black;
 
     return GestureDetector(
       onTap: onTap,
@@ -56,7 +58,7 @@ class ProductCard extends StatelessWidget {
                   Text(
                     "\$${product.price.toStringAsFixed(0)}",
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: textColor,
                       fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
                     ),
@@ -64,7 +66,7 @@ class ProductCard extends StatelessWidget {
                   Text(
                     product.name,
                     style: GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: textColor,
                       fontSize: 14.sp,
                     ),
                     maxLines: 1,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../core/const/app_colors.dart';
 import '../../../core/style/global_text_style.dart';
 
@@ -19,6 +18,11 @@ class CustomAuthField extends StatelessWidget {
   final double radiusValue2;
   final bool isDigitOnly;
 
+  // New theme-related parameters
+  final Color? textColor;
+  final Color? hintColor;
+  final Color? borderColor;
+
   const CustomAuthField({
     super.key,
     required this.controller,
@@ -29,43 +33,51 @@ class CustomAuthField extends StatelessWidget {
     this.validator,
     this.prefixIcon,
     this.keyboardType = TextInputType.text,
-    this.readOnly = false, // Default to TextInputType.text
+    this.readOnly = false,
     this.radiusValue = 500,
     this.radiusValue2 = 500,
     this.isDigitOnly = false,
+
+    // Optional theming
+    this.textColor,
+    this.hintColor,
+    this.borderColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final Color effectiveTextColor = textColor ?? Colors.black;
+    final Color effectiveHintColor = hintColor ?? Colors.grey;
+    final Color effectiveBorderColor = borderColor ?? Colors.grey;
+
     return SizedBox(
       child: TextFormField(
         readOnly: readOnly,
-        keyboardType: keyboardType, // Use optional keyboard type
+        keyboardType: keyboardType,
         obscureText: obscureText,
         controller: controller,
         maxLines: maxLines,
-
         inputFormatters: [
           if (isDigitOnly) FilteringTextInputFormatter.digitsOnly,
         ],
-        style: globalTextStyle(color: const Color(0xff000000)),
+        style: globalTextStyle(color: effectiveTextColor),
         decoration: InputDecoration(
           prefixIcon: prefixIcon,
-          hintText: hintText,
           suffixIcon: suffixIcon,
+          hintText: hintText,
           hintStyle: globalTextStyle(
-            color: Colors.grey,
+            color: effectiveHintColor,
             fontWeight: FontWeight.w400,
             fontSize: 14.sp,
           ),
-          fillColor: Colors.transparent, // Make background transparent
+          fillColor: Colors.transparent,
           filled: true,
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey, width: 2),
+            borderSide: BorderSide(color: effectiveBorderColor, width: 2),
             borderRadius: BorderRadius.circular(radiusValue),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey, width: 2),
+            borderSide: BorderSide(color: effectiveBorderColor, width: 2),
             borderRadius: BorderRadius.circular(radiusValue2),
           ),
           contentPadding: EdgeInsets.symmetric(

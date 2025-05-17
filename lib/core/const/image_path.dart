@@ -27,4 +27,8 @@ class ImagePath {
   static const String product_img_1 = "assets/images/product_img_1.png";
 
   static const String product_img_2 = "assets/images/product_img_2.png";
+
+  static const String profileImage = "assets/images/profileImage.png";
+
+  static const String send = "assets/images/send.png";
 }
