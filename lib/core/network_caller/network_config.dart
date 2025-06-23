@@ -1,6 +1,7 @@
 // ignore_for_file: file_names, constant_identifier_names, non_constant_identifier_names, avoid_print
 
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,14 +19,16 @@ class NetworkConfig {
     if (await InternetConnectionChecker().hasConnection) {
       var header = <String, String>{"Content-type": "application/json"};
       if (is_auth == true) {
-        header["Authorization"] = "Bearer ${sh.getString("token")}";
+        //  header["Authorization"] = "Bearer ${sh.getString("token")}";
+        header["Authorization"] =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTdmODg4MmU0NGY3NDMyMGEyZTM1ZCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDY3NzM2NywiZXhwIjoxNzUzMjY5MzY3fQ.fNkHI5cI7-kN_q3xRMgNzDAGTlzOzsc-ajr9bybsWco";
       }
 
       if (method.name == RequestMethod.GET.name) {
         try {
           var req = await http.get(Uri.parse(url), headers: header);
 
-          print(req.statusCode);
+          log(req.body);
           if (req.statusCode == 200) {
             return json.decode(req.body);
           } else {
@@ -36,9 +39,8 @@ class NetworkConfig {
         }
       } else if (method.name == RequestMethod.POST.name) {
         try {
-          var req = await http.post(Uri.parse(url),
-              // headers: header,
-              body: json_body);
+          var req =
+              await http.post(Uri.parse(url), headers: header, body: json_body);
 
           print(req.body);
           if (req.statusCode == 200) {

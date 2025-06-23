@@ -1,5 +1,5 @@
 class Urls {
-  static const String baseUrl = 'https://foot-fitness.vercel.app/api/v1';
+  static const String baseUrl = 'https://majidfrih-backend.vercel.app/api/v1';
   static const String login = '$baseUrl/auth/login';
   static const String signUp = '$baseUrl/users/register';
   static const String setupProfile = '$baseUrl/users/update-profile';

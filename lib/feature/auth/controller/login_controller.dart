@@ -1,119 +1,191 @@
 import 'dart:convert';
-//import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../core/network_caller/endpoints.dart';
+import 'package:prettyrini/core/const/app_snackbar.dart';
+import 'package:prettyrini/core/network_caller/endpoints.dart';
+import 'package:prettyrini/core/network_caller/network_config.dart';
+import 'package:prettyrini/core/services_class/user_info.dart';
 
 class LoginController extends GetxController {
-  final TextEditingController emailTEController = TextEditingController();
-  final TextEditingController passwordTEController = TextEditingController();
-  final isPasswordVisible = false.obs;
-  final isLoading = false.obs;
-  String? fcmToken;
+  final NetworkConfig _networkConfig = NetworkConfig();
+
+  // Controllers
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  // Observable states
+  var isLoginLoading = false.obs;
+  var isLoginLoadingError = "".obs;
+  var isPasswordVisible = false.obs;
+
+  // Form validation
+  var isEmailValid = true.obs;
+  var isPasswordValid = true.obs;
 
   @override
-  void onInit() {
-    super.onInit();
-    requestNotificationPermission();
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.onClose();
   }
 
-  // Request notification permissions
-  Future<void> requestNotificationPermission() async {
-    // FirebaseMessaging messaging = FirebaseMessaging.instance;
-    // NotificationSettings settings = await messaging.requestPermission(
-    //   alert: true,
-    //   badge: true,
-    //   sound: true,
-    // );
-
-    // if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    //   fcmToken = await messaging.getToken();
-    //   if (kDebugMode) {
-    //     print("FCM Token: $fcmToken");
-    //   } // Debugging purpose
-    // } else {
-    //   if (kDebugMode) {
-    //     print("User denied permission");
-    //   }
-    // }
-  }
-
+  // Toggle password visibility
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  Future<void> handleLogin() async {
-    if (emailTEController.text.isEmpty || passwordTEController.text.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please fill all fields',
-        snackPosition: SnackPosition.BOTTOM,
+  // Validation methods
+  bool validateEmail(String email) {
+    if (email.isEmpty) {
+      isEmailValid.value = false;
+      return false;
+    }
+
+    // Check if it's an email or phone number
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final phoneRegex = RegExp(r'^[\+]?[1-9][\d]{0,15}$');
+
+    isEmailValid.value =
+        emailRegex.hasMatch(email) || phoneRegex.hasMatch(email);
+    return isEmailValid.value;
+  }
+
+  bool validatePassword(String password) {
+    if (password.isEmpty || password.length < 6) {
+      isPasswordValid.value = false;
+      return false;
+    }
+    isPasswordValid.value = true;
+    return true;
+  }
+
+  // Form validation
+  bool validateForm() {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    bool isValid = true;
+
+    if (!validateEmail(email)) {
+      isValid = false;
+      Fluttertoast.showToast(
+        msg: "Please enter a valid email or phone number",
+        backgroundColor: Colors.red,
       );
-      return;
+    }
+
+    if (!validatePassword(password)) {
+      isValid = false;
+      Fluttertoast.showToast(
+        msg: "Password must be at least 6 characters",
+        backgroundColor: Colors.red,
+      );
+    }
+
+    return isValid;
+  }
+
+  // Login method
+  Future<bool> loginUser() async {
+    if (!validateForm()) {
+      return false;
     }
 
     try {
-      isLoading.value = true;
-      final response = await http.post(
-        Uri.parse(Urls.login),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': emailTEController.text,
-          'password': passwordTEController.text,
-          'fcmToken': fcmToken ?? "",
-        }),
+      log("loginUser started");
+      isLoginLoading.value = true;
+      isLoginLoadingError.value = '';
+
+      // Prepare request body according to your JSON format
+      final Map<String, dynamic> requestBody = {
+        "email": emailController.text.trim(),
+        "password": passwordController.text.trim(),
+      };
+
+      log("Login Request Body: ${json.encode(requestBody)}");
+
+      final response = await _networkConfig.ApiRequestHandler(
+        RequestMethod.POST,
+        Urls.login, // Make sure this URL is defined as '/auth/login'
+        json.encode(requestBody),
+        is_auth: false,
       );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final token = data['data']['token'];
-        if (kDebugMode) {
-          print("token1$token");
+      log("loginUser response: $response");
+
+      if (response['success'] == false) {
+        AppSnackbar.show(
+          message: response['message'] ?? 'Login failed',
+          isSuccess: false,
+        );
+        return false;
+      }
+
+      if (response != null && response['success'] == true) {
+        // Handle successful login
+        final token = response['data']?['token'];
+        if (token != null) {
+          final userService = LocalService();
+          userService.setToken(token);
         }
-        SharedPreferences pref = await SharedPreferences.getInstance();
-        pref.setString("token", token);
-        pref.setBool("isLogin", true);
-        //Get.offAll(() => NavBarView());
-        Get.snackbar(
-          'Success',
-          'Login successful',
-          snackPosition: SnackPosition.TOP,
+
+        // Store user data if available
+        final userData = response['data']?['user'];
+        if (userData != null) {
+          final userService = LocalService();
+          //  userService.setUserData(json.encode(userData));
+        }
+
+        Fluttertoast.showToast(
+          msg: "Login successful",
+          backgroundColor: Colors.green,
         );
+
+        // Clear form after successful login
+        clearForm();
+
+        return true;
       } else {
-        Get.snackbar(
-          'Error',
-          'Login failed. Please try again.',
-          snackPosition: SnackPosition.TOP,
+        Fluttertoast.showToast(
+          msg: response['message'] ?? "Failed to login",
+          backgroundColor: Colors.red,
         );
+        return false;
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Something went wrong',
-        snackPosition: SnackPosition.TOP,
+      isLoginLoadingError.value = e.toString();
+      log("Login error: $e");
+
+      Fluttertoast.showToast(
+        msg: "Login failed. Please check your credentials and try again.",
+        backgroundColor: Colors.red,
       );
+      return false;
     } finally {
-      isLoading.value = false;
+      isLoginLoading.value = false;
     }
   }
 
-  Future<void> handleGoogleSignIn() async {
-    try {
-      isLoading.value = true;
-      // Implement Google Sign In logic here
-      await Future.delayed(Duration(seconds: 2));
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Google sign in failed',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-    } finally {
-      isLoading.value = false;
-    }
+  // Clear form method
+  void clearForm() {
+    emailController.clear();
+    passwordController.clear();
+    isEmailValid.value = true;
+    isPasswordValid.value = true;
+  }
+
+  // Reset error states
+  void resetErrorStates() {
+    isLoginLoadingError.value = '';
+    isEmailValid.value = true;
+    isPasswordValid.value = true;
+  }
+
+  // Auto-fill for testing (remove in production)
+  void fillTestCredentials() {
+    emailController.text = "test@example.com";
+    passwordController.text = "12345678";
   }
 }

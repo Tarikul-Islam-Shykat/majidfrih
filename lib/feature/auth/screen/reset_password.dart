@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:prettyrini/core/const/widget.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
+import 'package:prettyrini/feature/auth/controller/reset_password_controller.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
 import 'package:prettyrini/feature/auth/widget/text_field_widget.dart';
 import 'package:prettyrini/route/route.dart';
@@ -17,10 +18,11 @@ class ResetPassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find<ThemeController>();
+    final ResetPasswordController resetPasswordController =
+        Get.put(ResetPasswordController());
 
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-    var loginEmailController = TextEditingController();
 
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -45,7 +47,7 @@ class ResetPassword extends StatelessWidget {
                   tilte_text_heading("Reset Password"),
                   SizedBox(height: 50.h),
                   CustomAuthField(
-                    controller: loginEmailController,
+                    controller: resetPasswordController.emailController,
                     hintText: "Email",
                   ),
                   SizedBox(height: 10.h),
@@ -54,12 +56,12 @@ class ResetPassword extends StatelessWidget {
                       Spacer(),
                       GestureDetector(
                         onTap: () {
-                          //  Get.toNamed(AppRoute.emailVerificationScreen);
+                          Get.back(); // Go back to login screen
                         },
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            'Remember Password',
+                            'Remember Password?',
                             style: GoogleFonts.poppins(
                               fontSize: 15.sp,
                               color: themeController.isDarkMode
@@ -72,19 +74,49 @@ class ResetPassword extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 10.h),
-                  CustomButton(
-                    onTap: () {
-                      Get.toNamed(AppRoute.otpScreen);
-                    },
-                    title: Text(
-                      "Enter",
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  Obx(() => CustomButton(
+                        onTap: resetPasswordController.isResetLoading.value
+                            ? null
+                            : () async {
+                                final success = await resetPasswordController
+                                    .resetPassword();
+                                if (success) {
+                                  // Navigate to OTP screen or back to login
+                                  Get.toNamed(AppRoute.otpScreen);
+                                }
+                              },
+                        title: resetPasswordController.isResetLoading.value
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 20.w,
+                                    height: 20.h,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Text(
+                                    "Sending...",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                "Send Reset Link",
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      )),
                 ],
               ),
             ),

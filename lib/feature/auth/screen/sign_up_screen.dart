@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:prettyrini/core/const/country_list.dart';
 import 'package:prettyrini/core/const/widget.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
+import 'package:prettyrini/feature/auth/controller/signup_controller.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
 import 'package:prettyrini/feature/auth/widget/text_field_widget.dart';
 import 'package:prettyrini/route/route.dart';
@@ -19,17 +20,10 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find<ThemeController>();
+    final SignUpController signUpController = Get.put(SignUpController());
 
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-    var loginEmailController = TextEditingController();
-    var loginPasswordController = TextEditingController();
-
-    Map<String, String> selectedCountry = {
-      "name": "France",
-      "code": "+33",
-      "icon": "🇫🇷",
-    };
 
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -54,126 +48,151 @@ class SignUpScreen extends StatelessWidget {
                 children: [
                   tilte_text_heading("SIGN UP"),
                   SizedBox(height: 50.h),
-                  CustomAuthField(
-                    controller: loginEmailController,
-                    hintText: "Phone Number/Email",
-                  ),
+
+                  // Email Field
+                  Obx(() => CustomAuthField(
+                        controller: signUpController.emailController,
+                        hintText: "Email",
+                        borderColor: signUpController.isEmailValid.value
+                            ? Colors.grey
+                            : Colors.red,
+                        // onChanged: (value) {
+                        //   signUpController.validateEmail(value);
+                        // },
+                      )),
                   SizedBox(height: 10.h),
-                  CustomAuthField(
-                    controller: loginEmailController,
-                    hintText: "Password",
-                    // suffixIcon: Image.asset(ImagePath.passwordHidden),
-                  ),
+
+                  // Password Field
+                  Obx(() => CustomAuthField(
+                        controller: signUpController.passwordController,
+                        hintText: "Password",
+                        // isObscure: true,
+                        borderColor: signUpController.isPasswordValid.value
+                            ? Colors.grey
+                            : Colors.red,
+                        // onChanged: (value) {
+                        //   signUpController.validatePassword(value);
+                        // },
+                      )),
                   SizedBox(height: 10.h),
-                  Container(
-                    height: 44.h,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey,
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(500),
-                    ),
-                    child: Row(
-                      children: [
-                        // Country selector
-                        InkWell(
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              builder: (_) => ListView.builder(
-                                itemCount: countryList.length,
-                                itemBuilder: (_, index) {
-                                  final country = countryList[index];
-                                  return ListTile(
-                                    leading: Text(
-                                      country['icon'] ?? '',
-                                      style: TextStyle(fontSize: 16.sp),
-                                    ),
-                                    title: Text(country['name'] ?? ''),
-                                    subtitle: Text(
-                                      country['code'] ?? '',
-                                    ),
-                                    onTap: () {
-                                      // setState(() {
-                                      //   selectedCountry = country;
-                                      // });
-                                      Navigator.pop(context);
+
+                  // Phone Number Field with Country Selector
+                  Obx(() => Container(
+                        height: 44.h,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: signUpController.isPhoneValid.value
+                                ? Colors.grey
+                                : Colors.red,
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(500),
+                        ),
+                        child: Row(
+                          children: [
+                            // Country selector
+                            InkWell(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (_) => ListView.builder(
+                                    itemCount: countryList.length,
+                                    itemBuilder: (_, index) {
+                                      final country = countryList[index];
+                                      return ListTile(
+                                        leading: Text(
+                                          country['icon'] ?? '',
+                                          style: TextStyle(fontSize: 16.sp),
+                                        ),
+                                        title: Text(country['name'] ?? ''),
+                                        subtitle: Text(
+                                          country['code'] ?? '',
+                                        ),
+                                        onTap: () {
+                                          signUpController
+                                              .selectCountry(country);
+                                          Navigator.pop(context);
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                            ),
-                            decoration: const BoxDecoration(
-                              //  color: Color(0xFFF1F6FF),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(30),
-                                bottomLeft: Radius.circular(30),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  selectedCountry['icon'] ?? '',
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 16.sp, color: Colors.white),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
                                 ),
-                                const Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  selectedCountry['code'] ?? '',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16.sp,
-                                    color: themeController.isDarkMode
-                                        ? Colors.white
-                                        : Colors.black,
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(30),
+                                    bottomLeft: Radius.circular(30),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        const VerticalDivider(width: 1, color: Colors.grey),
-
-                        // Phone number input
-                        Expanded(
-                          child: TextFormField(
-                            //  controller: signPhoneController,
-                            inputFormatters: [
-                              FilteringTextInputFormatter
-                                  .digitsOnly, // Allow only digits
-                            ],
-                            decoration: InputDecoration(
-                              hintText: "Phone number",
-                              hintStyle: GoogleFonts.poppins(
-                                  fontSize: 16.sp, color: Colors.grey),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 10,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      signUpController
+                                              .selectedCountry.value['icon'] ??
+                                          '',
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 16.sp, color: Colors.white),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_drop_down,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      signUpController
+                                              .selectedCountry.value['code'] ??
+                                          '',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16.sp,
+                                        color: themeController.isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            keyboardType: TextInputType.number,
-                          ),
+
+                            const VerticalDivider(width: 1, color: Colors.grey),
+
+                            // Phone number input
+                            Expanded(
+                              child: TextFormField(
+                                controller: signUpController.phoneController,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                decoration: InputDecoration(
+                                  hintText: "Phone number",
+                                  hintStyle: GoogleFonts.poppins(
+                                      fontSize: 16.sp, color: Colors.grey),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                  ),
+                                ),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) {
+                                  signUpController.validatePhone(value);
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
+                      )),
                   SizedBox(height: 10.h),
+
                   Row(
                     children: [
                       Spacer(),
                       GestureDetector(
                         onTap: () {
-                          //  Get.toNamed(AppRoute.emailVerificationScreen);
+                          // Navigate to forgot password
                         },
                         child: Align(
                           alignment: Alignment.centerRight,
@@ -189,19 +208,51 @@ class SignUpScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 10.h),
-                  CustomButton(
-                    onTap: () {
-                      Get.toNamed(AppRoute.subsCriptionScreen);
-                    },
-                    title: Text(
-                      "Enter",
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+
+                  // Sign Up Button with Loading State
+                  Obx(() => CustomButton(
+                        onTap: signUpController.isSignUpLoading.value
+                            ? null
+                            : () async {
+                                final success =
+                                    await signUpController.signUpUser();
+                                if (success) {
+                                  //      Get.toNamed(AppRoute.subsCriptionScreen);
+                                }
+                              },
+                        title: signUpController.isSignUpLoading.value
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    "Signing Up...",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Text(
+                                "Sign Up",
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      )),
                 ],
               ),
             ),
@@ -219,7 +270,7 @@ class SignUpScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Don’t have an account? ',
+                        'Already have an account? ',
                         style: GoogleFonts.poppins(
                           fontSize: 15.sp,
                           color: themeController.isDarkMode
@@ -227,11 +278,17 @@ class SignUpScreen extends StatelessWidget {
                               : Colors.black,
                         ),
                       ),
-                      Text(
-                        'Login',
-                        style: GoogleFonts.poppins(
-                          fontSize: 15.sp,
-                          color: AppColors.primaryColor,
+                      GestureDetector(
+                        onTap: () {
+                          // Navigate to login screen
+                          Get.back(); // or Get.toNamed(AppRoute.loginScreen);
+                        },
+                        child: Text(
+                          'Login',
+                          style: GoogleFonts.poppins(
+                            fontSize: 15.sp,
+                            color: AppColors.primaryColor,
+                          ),
                         ),
                       ),
                     ],

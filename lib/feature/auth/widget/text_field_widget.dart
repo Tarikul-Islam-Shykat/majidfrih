@@ -46,7 +46,7 @@ class CustomAuthField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color effectiveTextColor = textColor ?? Colors.black;
+    final Color effectiveTextColor = textColor ?? Colors.white;
     final Color effectiveHintColor = hintColor ?? Colors.grey;
     final Color effectiveBorderColor = borderColor ?? Colors.grey;
 

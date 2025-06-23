@@ -1,103 +1,243 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:prettyrini/core/const/app_snackbar.dart';
+import 'package:prettyrini/core/const/country_list.dart';
+import 'package:prettyrini/core/network_caller/endpoints.dart';
+import 'package:prettyrini/core/network_caller/network_config.dart';
+import 'package:prettyrini/core/services_class/user_info.dart';
 
-import '../../../core/network_caller/endpoints.dart';
-import '../screen/profile_setup_screen.dart';
+class SignUpController extends GetxController {
+  final NetworkConfig _networkConfig = NetworkConfig();
 
-class SignInController extends GetxController {
-  final TextEditingController emailTEController = TextEditingController();
-  final TextEditingController passwordTEController = TextEditingController();
-  final TextEditingController conPasswordTEController = TextEditingController();
-  final isPasswordVisible = false.obs;
-  final isConPasswordVisible = false.obs;
-  final isLoading = false.obs;
+  // Controllers
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final phoneController = TextEditingController();
 
-  void toggleConPasswordVisibility() {
-    isConPasswordVisible.value = !isConPasswordVisible.value;
+  // Observable states
+  var isSignUpLoading = false.obs;
+  var isSignUpLoadingError = "".obs;
+  var selectedCountry = Rx<Map<String, String>>({
+    "name": "Bangladesh",
+    "code": "+880",
+    "icon": "🇧🇩",
+  });
+
+  // Form validation
+  var isEmailValid = true.obs;
+  var isPasswordValid = true.obs;
+  var isPhoneValid = true.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Initialize with Bangladesh as default
+    selectedCountry.value = countryList.firstWhere(
+      (country) => country['name'] == 'Bangladesh',
+      orElse: () => countryList.first,
+    );
   }
 
-  void togglePasswordVisibility() {
-    isPasswordVisible.value = !isPasswordVisible.value;
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    phoneController.dispose();
+    super.onClose();
   }
 
-  Future<void> handleSignUp() async {
-    if (emailTEController.text.isEmpty || passwordTEController.text.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Please fill all fields',
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      return;
-    } else if (passwordTEController.text != conPasswordTEController.text) {
-      Get.snackbar(
-        "Error",
-        "password not match",
-      );
-    } else {
-      try {
-        isLoading.value = true;
-        final response = await http.post(
-          Uri.parse(Urls.signUp),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'email': emailTEController.text,
-            'password': passwordTEController.text,
-          }),
-        );
+  // Select country method
+  void selectCountry(Map<String, String> country) {
+    selectedCountry.value = country;
+    update();
+  }
 
-        if (response.statusCode == 200) {
-          final data = jsonDecode(response.body);
-          final token = data['data']['token'];
-          if (kDebugMode) {
-            print(token);
-          }
-          SharedPreferences pref = await SharedPreferences.getInstance();
-          pref.setString("token", token);
-          pref.setBool("isLogin", true);
-          Get.offAll(() => ProfileSetupScreen());
-          Get.snackbar(
-            'Success',
-            'User Registered successfully!',
-            snackPosition: SnackPosition.TOP,
-          );
-        } else {
-          final data = jsonDecode(response.body);
-          Get.snackbar(
-            'Error',
-            '${data['message']}',
-            snackPosition: SnackPosition.TOP,
-          );
-        }
-      } catch (e) {
-        Get.snackbar(
-          'Error',
-          'Something went wrong',
-          snackPosition: SnackPosition.TOP,
-        );
-      } finally {
-        isLoading.value = false;
-      }
+  // Validation methods
+  bool validateEmail(String email) {
+    if (email.isEmpty) {
+      isEmailValid.value = false;
+      return false;
     }
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    isEmailValid.value = emailRegex.hasMatch(email);
+    return isEmailValid.value;
   }
 
-  Future<void> handleGoogleSignUp() async {
+  bool validatePassword(String password) {
+    if (password.isEmpty || password.length < 6) {
+      isPasswordValid.value = false;
+      return false;
+    }
+    isPasswordValid.value = true;
+    return true;
+  }
+
+  bool validatePhone(String phone) {
+    if (phone.isEmpty || phone.length < 10) {
+      isPhoneValid.value = false;
+      return false;
+    }
+    isPhoneValid.value = true;
+    return true;
+  }
+
+  // Form validation
+  bool validateForm() {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+    final phone = phoneController.text.trim();
+
+    bool isValid = true;
+
+    if (!validateEmail(email)) {
+      isValid = false;
+      Fluttertoast.showToast(
+        msg: "Please enter a valid email",
+        backgroundColor: Colors.red,
+      );
+    }
+
+    if (!validatePassword(password)) {
+      isValid = false;
+      Fluttertoast.showToast(
+        msg: "Password must be at least 6 characters",
+        backgroundColor: Colors.red,
+      );
+    }
+
+    if (!validatePhone(phone)) {
+      isValid = false;
+      Fluttertoast.showToast(
+        msg: "Please enter a valid phone number",
+        backgroundColor: Colors.red,
+      );
+    }
+
+    return isValid;
+  }
+
+  // Get country code (remove + sign for API)
+  String getCountryCode() {
+    String code = selectedCountry.value['code'] ?? '+880';
+    // Remove the + sign and any hyphens for API
+    return code
+        .replaceAll('+', '')
+        .replaceAll('-', '')
+        .split('')
+        .take(3)
+        .join();
+  }
+
+  // Format phone number with country code
+  String getFormattedPhoneNumber() {
+    final countryCode = selectedCountry.value['code'] ?? '+880';
+    final phone = phoneController.text.trim();
+
+    // If phone already starts with country code, return as is
+    if (phone.startsWith(countryCode)) {
+      return phone;
+    }
+
+    // Otherwise, prepend country code
+    return '$countryCode$phone';
+  }
+
+  // Sign up method
+  Future<bool> signUpUser() async {
+    if (!validateForm()) {
+      return false;
+    }
+
     try {
-      isLoading.value = true;
-      // Implement Google Sign In logic here
-      await Future.delayed(Duration(seconds: 2)); // Simulated API call
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Google sign in failed',
-        snackPosition: SnackPosition.BOTTOM,
+      log("signUpUser started");
+      isSignUpLoading.value = true;
+      isSignUpLoadingError.value = '';
+
+      // Prepare request body according to your JSON format
+      final Map<String, dynamic> requestBody = {
+        "phoneNumber": getFormattedPhoneNumber(),
+        "email": emailController.text.trim(),
+        "password": passwordController.text.trim(),
+        "countryCode": getCountryCode(),
+        "countryName":
+            selectedCountry.value['name']?.toLowerCase() ?? 'bangladesh',
+      };
+
+      log("Request Body: ${json.encode(requestBody)}");
+
+      final response = await _networkConfig.ApiRequestHandler(
+        RequestMethod.POST,
+        Urls.signUp, // Make sure this URL is defined
+        json.encode(requestBody),
+        is_auth: false,
       );
+
+      log("signUpUser response: $response");
+
+      if (response['success'] == false) {
+        AppSnackbar.show(
+          message: response['message'] ?? 'Sign up failed',
+          isSuccess: false,
+        );
+        return false;
+      }
+
+      if (response != null && response['success'] == true) {
+        // Handle successful registration
+        final token = response['data']?['token'];
+        if (token != null) {
+          final userService = LocalService();
+          userService.setToken(token);
+        }
+
+        Fluttertoast.showToast(
+          msg: "Registration successful",
+          backgroundColor: Colors.green,
+        );
+
+        // Clear form after successful registration
+        clearForm();
+
+        return true;
+      } else {
+        Fluttertoast.showToast(
+          msg: response['message'] ?? "Failed to register",
+          backgroundColor: Colors.red,
+        );
+        return false;
+      }
+    } catch (e) {
+      isSignUpLoadingError.value = e.toString();
+      log("SignUp error: $e");
+
+      Fluttertoast.showToast(
+        msg: "Registration failed. Please try again.",
+        backgroundColor: Colors.red,
+      );
+      return false;
     } finally {
-      isLoading.value = false;
+      isSignUpLoading.value = false;
     }
+  }
+
+  // Clear form method
+  void clearForm() {
+    emailController.clear();
+    passwordController.clear();
+    phoneController.clear();
+    isEmailValid.value = true;
+    isPasswordValid.value = true;
+    isPhoneValid.value = true;
+  }
+
+  // Reset error states
+  void resetErrorStates() {
+    isSignUpLoadingError.value = '';
+    isEmailValid.value = true;
+    isPasswordValid.value = true;
+    isPhoneValid.value = true;
   }
 }
