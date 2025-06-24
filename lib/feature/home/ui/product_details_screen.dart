@@ -1,19 +1,17 @@
 // lib/screens/product_detail_screen.dart
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:prettyrini/core/const/app_bar.dart';
 import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
-import 'package:prettyrini/feature/home/controller/product_controller.dart';
 import 'package:prettyrini/feature/home/model/product_model.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
-  // final ProductController productController = Get.find<ProductController>();
 
   ProductDetailScreen({Key? key, required this.product}) : super(key: key);
 
@@ -37,7 +35,7 @@ class ProductDetailScreen extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                //buildAppBar("Jenny"),
+                buildAppBar("Jenny", textColor: Colors.white),
                 SizedBox(
                   height: 20,
                 ),
@@ -84,6 +82,7 @@ class ProductDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Product Image
+
             Container(
               margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
               height: 300,
@@ -94,9 +93,16 @@ class ProductDetailScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  product.image,
+                child: CachedNetworkImage(
+                  imageUrl:
+                      product.image, // Make sure this is a valid URL string
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  errorWidget: (context, url, error) => const Center(
+                    child: Icon(Icons.error),
+                  ),
                 ),
               ),
             ),

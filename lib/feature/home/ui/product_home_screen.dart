@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:prettyrini/core/const/app_bar.dart';
 import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/feature/home/controller/product_controller.dart';
@@ -34,10 +35,10 @@ class ProductHomeScreen extends StatelessWidget {
             ),
           ),
 
-          // Content
           SafeArea(
             child: Column(
               children: [
+                buildAppBar("Jenny", textColor: Colors.white),
                 const SizedBox(height: 10),
                 _buildLocationLanguageSelector(context),
                 const SizedBox(height: 20),
@@ -75,29 +76,30 @@ class ProductHomeScreen extends StatelessWidget {
       child: Column(
         children: [
           // Country/Currency and Language Selectors
-          screenWidth > 600
-              ? _buildWideScreenSelectors()
-              : _buildNarrowScreenSelectors(),
-
+          // _buildNarrowScreenSelectors(),
+          // screenWidth > 600
+          //     ? _buildWideScreenSelectors()
+          //     : _buildNarrowScreenSelectors(),
+          _buildCountryDropdown(),
           // Currency Display
           SizedBox(height: 8.h),
-          Obx(() => Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(
-                      color: AppColors.primaryColor.withOpacity(0.5)),
-                ),
-                child: Text(
-                  'Currency: ${productController.selectedCurrency.value}',
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )),
+          // Obx(() => Container(
+          //       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+          //       decoration: BoxDecoration(
+          //         color: AppColors.primaryColor.withOpacity(0.2),
+          //         borderRadius: BorderRadius.circular(20.r),
+          //         border: Border.all(
+          //             color: AppColors.primaryColor.withOpacity(0.5)),
+          //       ),
+          //       child: Text(
+          //         'Currency: ${productController.selectedCurrency.value}',
+          //         style: GoogleFonts.poppins(
+          //           color: Colors.white,
+          //           fontSize: 12.sp,
+          //           fontWeight: FontWeight.w500,
+          //         ),
+          //       ),
+          //     )),
         ],
       ),
     );
@@ -117,10 +119,10 @@ class ProductHomeScreen extends StatelessWidget {
         // Language Selector
         Icon(Icons.language, color: Colors.white, size: 20.w),
         SizedBox(width: 8.w),
-        Expanded(
-          flex: 2,
-          child: _buildLanguageDropdown(),
-        ),
+        // Expanded(
+        //   flex: 2,
+        //   child: _buildLanguageDropdown(),
+        // ),
       ],
     );
   }
@@ -137,14 +139,14 @@ class ProductHomeScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 12.h),
-        // Language Selector Row
-        Row(
-          children: [
-            Icon(Icons.language, color: Colors.white, size: 20.w),
-            SizedBox(width: 8.w),
-            Expanded(child: _buildLanguageDropdown()),
-          ],
-        ),
+        // // Language Selector Row
+        // Row(
+        //   children: [
+        //     Icon(Icons.language, color: Colors.white, size: 20.w),
+        //     SizedBox(width: 8.w),
+        //     Expanded(child: _buildLanguageDropdown()),
+        //   ],
+        // ),
       ],
     );
   }

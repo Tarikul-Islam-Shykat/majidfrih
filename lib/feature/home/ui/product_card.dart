@@ -5,11 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/feature/home/controller/product_controller.dart';
 import 'package:prettyrini/feature/home/model/product_model.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class EnhancedProductCard extends StatelessWidget {
   final Product product;
@@ -28,6 +24,7 @@ class EnhancedProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        height: 300,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -191,21 +188,20 @@ class EnhancedProductCard extends StatelessWidget {
         ),
 
         // Original price (if different currency)
-        SizedBox(height: 2.h),
-        Obx(() {
-          if (controller.selectedCurrency.value != product.originalCurrency) {
-            return Text(
-              '${product.originalCurrency} ${product.price.toStringAsFixed(2)}',
-              style: GoogleFonts.poppins(
-                color: Colors.white.withOpacity(0.6),
-                fontSize: 11.sp,
-                decoration: TextDecoration.lineThrough,
-                decorationColor: Colors.white.withOpacity(0.6),
-              ),
-            );
-          }
-          return const SizedBox.shrink();
-        }),
+        // Obx(() {
+        //   if (controller.selectedCurrency.value != product.originalCurrency) {
+        //     return Text(
+        //       '${product.originalCurrency} ${product.price.toStringAsFixed(2)}',
+        //       style: GoogleFonts.poppins(
+        //         color: Colors.white.withOpacity(0.6),
+        //         fontSize: 11.sp,
+        //         decoration: TextDecoration.lineThrough,
+        //         decorationColor: Colors.white.withOpacity(0.6),
+        //       ),
+        //     );
+        //   }
+        //   return const SizedBox.shrink();
+        // }),
       ],
     );
   }

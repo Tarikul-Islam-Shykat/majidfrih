@@ -1,6 +1,5 @@
 // lib/feature/home/controller/enhanced_product_controller.dart
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -8,7 +7,6 @@ import 'package:prettyrini/core/network_caller/endpoints.dart';
 import 'package:prettyrini/core/network_caller/network_config.dart';
 import 'package:prettyrini/feature/home/model/product_model.dart';
 import 'package:prettyrini/feature/home/service/currency%20_service.dart';
-import 'package:prettyrini/feature/home/service/translation_service.dart';
 
 class EnhancedProductController extends GetxController {
   final NetworkConfig _networkConfig = NetworkConfig();
