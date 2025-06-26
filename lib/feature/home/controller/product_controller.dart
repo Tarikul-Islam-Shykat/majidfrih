@@ -1,5 +1,6 @@
 // lib/feature/home/controller/enhanced_product_controller.dart
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -132,6 +133,8 @@ class EnhancedProductController extends GetxController {
       if (response != null && response['success'] == true) {
         final dataList = response['data'] as List;
 
+        log("datalist ${dataList}");
+
         // Convert to Product objects
         List<Product> products = [];
         for (var item in dataList) {
@@ -233,7 +236,7 @@ class EnhancedProductController extends GetxController {
 
     final convertedPrice = CurrencyService.convertPrice(
       product.price,
-      product.originalCurrency,
+      product.originalCurrency!,
       selectedCurrency.value,
       exchangeRates,
     );
@@ -248,15 +251,6 @@ class EnhancedProductController extends GetxController {
     return CurrencyService.formatCurrency(
         convertedPrice, selectedCurrency.value);
   }
-
-  // String getTranslatedText(String text) {
-  //   if (selectedLanguage.value == 'English') return text;
-
-  //   // Try offline translation first
-  //   String translated =
-  //       TranslationService.getOfflineTranslation(text, selectedLanguage.value);
-  //   return translated;
-  // }
 
   void refreshData() async {
     debugPrint('Refreshing all data...');

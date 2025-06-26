@@ -118,16 +118,15 @@ class ProductDetailScreen extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       color: Colors.white,
                       fontSize: 18.sp,
-                      fontWeight: FontWeight.bold,
                     ),
                     maxLines: 2,
                   ),
-                  const SizedBox(width: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        product.price.toString(),
+                        "Price : ${product.price.toString()}",
                         style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontSize: 24.sp,
@@ -173,7 +172,6 @@ class ProductDetailScreen extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   color: Colors.white,
                   fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

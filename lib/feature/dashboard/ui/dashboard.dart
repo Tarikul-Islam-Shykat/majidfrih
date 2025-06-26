@@ -4,7 +4,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
-import 'package:prettyrini/feature/chatbox/chat_list.dart';
+import 'package:prettyrini/feature/chat/view/chat_list.dart';
 import 'package:prettyrini/feature/dashboard/controller/navigation_controller.dart';
 import 'package:prettyrini/feature/home/ui/product_home_screen.dart';
 import 'package:prettyrini/feature/post/ui/post_ui.dart';
@@ -26,7 +26,7 @@ class DashboardScreen extends StatelessWidget {
     final List<Widget> screens = [
       ProductHomeScreen(),
       PostScreen(),
-      ChatScreen(),
+      UsersChatList(),
       ProfileScreen(),
     ];
 

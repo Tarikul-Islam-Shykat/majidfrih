@@ -10,15 +10,15 @@ class Product {
   final DateTime createdAt;
   final DateTime updatedAt;
   final Category category;
-  
+
   // Enhanced fields for localization
   final String? translatedName;
   final String? translatedDescription;
   final bool isFavorite;
   final String? description; // Optional description field
-  
+
   // Currency conversion fields
-  final String originalCurrency;
+  final String? originalCurrency;
   final Map<String, double>? convertedPrices; // Cache for converted prices
 
   Product({
@@ -35,7 +35,7 @@ class Product {
     this.translatedDescription,
     this.isFavorite = false,
     this.description,
-    this.originalCurrency = 'USD', // Default to USD
+    this.originalCurrency, // Default to USD
     this.convertedPrices,
   });
 
@@ -52,7 +52,7 @@ class Product {
       category: Category.fromJson(json['category']),
       description: json['description'], // Optional field
       isFavorite: json['isFavorite'] ?? false,
-      originalCurrency: json['originalCurrency'] ?? 'USD',
+      originalCurrency: json['moneyCode'],
     );
   }
 
@@ -69,7 +69,7 @@ class Product {
       'category': category.toJson(),
       'description': description,
       'isFavorite': isFavorite,
-      'originalCurrency': originalCurrency,
+      'moneyCode': originalCurrency,
       'translatedName': translatedName,
       'translatedDescription': translatedDescription,
     };
@@ -103,7 +103,8 @@ class Product {
       updatedAt: updatedAt ?? this.updatedAt,
       category: category ?? this.category,
       translatedName: translatedName ?? this.translatedName,
-      translatedDescription: translatedDescription ?? this.translatedDescription,
+      translatedDescription:
+          translatedDescription ?? this.translatedDescription,
       isFavorite: isFavorite ?? this.isFavorite,
       description: description ?? this.description,
       originalCurrency: originalCurrency ?? this.originalCurrency,
@@ -114,19 +115,21 @@ class Product {
   // Getters for display
   String get displayName => translatedName ?? name;
   String get displayDescription => translatedDescription ?? description ?? '';
-  
+
   // Method to get converted price for a specific currency
-  double getConvertedPrice(String targetCurrency, Map<String, double> exchangeRates) {
+  double getConvertedPrice(
+      String targetCurrency, Map<String, double> exchangeRates) {
     if (targetCurrency == originalCurrency) return price;
-    
+
     // Check if we have cached converted price
-    if (convertedPrices != null && convertedPrices!.containsKey(targetCurrency)) {
+    if (convertedPrices != null &&
+        convertedPrices!.containsKey(targetCurrency)) {
       return convertedPrices![targetCurrency]!;
     }
-    
+
     // Calculate conversion
     double convertedPrice = price;
-    
+
     // Convert to USD first if needed
     if (originalCurrency != 'USD') {
       final fromRate = exchangeRates[originalCurrency];
@@ -134,7 +137,7 @@ class Product {
         convertedPrice = price / fromRate;
       }
     }
-    
+
     // Convert to target currency
     if (targetCurrency != 'USD') {
       final toRate = exchangeRates[targetCurrency];
@@ -142,12 +145,13 @@ class Product {
         convertedPrice = convertedPrice * toRate;
       }
     }
-    
+
     return convertedPrice;
   }
 
   // Method to format price with currency symbol
-  String getFormattedPrice(String currencyCode, Map<String, double> exchangeRates) {
+  String getFormattedPrice(
+      String currencyCode, Map<String, double> exchangeRates) {
     final price = getConvertedPrice(currencyCode, exchangeRates);
     return _formatCurrency(price, currencyCode);
   }
@@ -164,9 +168,9 @@ class Product {
       'INR': '₹',
       'CHF': 'CHF ',
     };
-    
+
     final symbol = currencySymbols[currencyCode] ?? '$currencyCode ';
-    return '$symbol${amount.toStringAsFixed(2)}';
+    return '$symbol ${amount.toStringAsFixed(2)}';
   }
 }
 
