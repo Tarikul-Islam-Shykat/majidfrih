@@ -7,6 +7,8 @@ import 'package:prettyrini/core/const/country_list.dart';
 import 'package:prettyrini/core/const/widget.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
 import 'package:prettyrini/feature/auth/controller/signup_controller.dart';
+import 'package:prettyrini/feature/auth/screen/forget_pasword_screen.dart';
+import 'package:prettyrini/feature/auth/screen/reset_password.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
 import 'package:prettyrini/feature/auth/widget/text_field_widget.dart';
 import 'package:prettyrini/route/route.dart';
@@ -193,6 +195,7 @@ class SignUpScreen extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           // Navigate to forgot password
+                          Get.to(ResetPassword());
                         },
                         child: Align(
                           alignment: Alignment.centerRight,
@@ -217,7 +220,7 @@ class SignUpScreen extends StatelessWidget {
                                 final success =
                                     await signUpController.signUpUser();
                                 if (success) {
-                                  //      Get.toNamed(AppRoute.subsCriptionScreen);
+                                  Get.toNamed(AppRoute.loginScreen);
                                 }
                               },
                         title: signUpController.isSignUpLoading.value

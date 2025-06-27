@@ -126,7 +126,7 @@ class ProductDetailScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Price : ${product.price.toString()}",
+                        "Price : ${product.price.toString()} ${product.originalCurrency}",
                         style: GoogleFonts.poppins(
                           color: Colors.white,
                           fontSize: 24.sp,

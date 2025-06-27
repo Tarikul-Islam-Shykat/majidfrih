@@ -52,20 +52,20 @@ Widget buildAppBar(String username, {required Color textColor}) {
         ),
         Row(
           children: [
-            CircleAvatar(
-              radius: 30.r,
-              backgroundColor: isDarkMode
-                  ? Color(0xFF0E8898).withValues(alpha: 0.05)
-                  : Color(0xFF0E8898).withValues(alpha: 0.05),
-              child: IconButton(
-                icon: Icon(
-                  size: 30.r,
-                  Icons.search,
-                  color: isDarkMode ? Colors.white : Colors.black,
-                ),
-                onPressed: () {},
-              ),
-            ),
+            // CircleAvatar(
+            //   radius: 30.r,
+            //   backgroundColor: isDarkMode
+            //       ? Color(0xFF0E8898).withValues(alpha: 0.05)
+            //       : Color(0xFF0E8898).withValues(alpha: 0.05),
+            //   child: IconButton(
+            //     icon: Icon(
+            //       size: 30.r,
+            //       Icons.search,
+            //       color: isDarkMode ? Colors.white : Colors.black,
+            //     ),
+            //     onPressed: () {},
+            //   ),
+            // ),
             const SizedBox(width: 10),
             // Container(
             //   decoration: BoxDecoration(

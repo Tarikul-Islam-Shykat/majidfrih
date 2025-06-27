@@ -26,7 +26,6 @@ class _OtpVeryScreenState extends State<OtpVeryScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize OTP controller
     otpController = Get.put(OtpController());
   }
 
@@ -36,6 +35,10 @@ class _OtpVeryScreenState extends State<OtpVeryScreen> {
 
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
+
+    final args = Get.arguments as Map;
+
+    String email = args['email'];
 
     return Scaffold(
       backgroundColor: AppColors.bgColor,
@@ -66,7 +69,8 @@ class _OtpVeryScreenState extends State<OtpVeryScreen> {
                         ? Padding(
                             padding: EdgeInsets.symmetric(horizontal: 20.w),
                             child: Text(
-                              'Enter the 4-digit code sent to\n${otpController.email.value}',
+                              //       'Enter the 4-digit code sent to\n${otpController.email.value}',
+                              'Enter the 4-digit code sent to\n$email',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
                                 fontSize: 14.sp,
@@ -152,8 +156,7 @@ class _OtpVeryScreenState extends State<OtpVeryScreen> {
                             : () async {
                                 final success = await otpController.verifyOtp();
                                 if (success) {
-                                  // Navigate to next screen or show success
-                                  log("OTP verification successful");
+                                  //    Get.to(page);
                                 }
                               },
                         title: otpController.isVerifyLoading.value

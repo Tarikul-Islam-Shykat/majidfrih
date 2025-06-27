@@ -5,6 +5,7 @@ class Urls {
   static const String setupProfile = '$baseUrl/users/update-profile';
   static const String verifyOTP = '$baseUrl/auth/verify-otp';
   static const String resetPassword = '$baseUrl/auth/reset-password';
+  static const String userPofile = '$baseUrl/auth/profile';
 
   static const String websocketUrl = 'ws//jm9ffg7n-5005.inc1.devtunnels.ms/';
 

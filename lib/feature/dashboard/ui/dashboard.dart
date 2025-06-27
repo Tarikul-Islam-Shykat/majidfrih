@@ -14,7 +14,6 @@ import 'package:prettyrini/feature/profile/profile_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find<ThemeController>();
@@ -29,7 +28,6 @@ class DashboardScreen extends StatelessWidget {
       UsersChatList(),
       ProfileScreen(),
     ];
-
     return Scaffold(
       body: Stack(
         children: [
@@ -140,7 +138,7 @@ class DashboardScreen extends StatelessWidget {
     return InkWell(
       onTap: () => controller.changeTab(index),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
         decoration: isSelected
             ? BoxDecoration(
                 color: isDarkMode ? Colors.black : Colors.white,
@@ -167,159 +165,6 @@ class DashboardScreen extends StatelessWidget {
             ],
           ],
         ),
-      ),
-    );
-  }
-}
-
-// Content screens
-class HomeContent extends StatelessWidget {
-  const HomeContent({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Text(
-                    'Home',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildContentCard(context),
-                  const SizedBox(height: 16),
-                  _buildContentCard(context),
-                  const SizedBox(height: 16),
-                  _buildContentCard(context),
-                  const SizedBox(height: 100), // Space for navigation bar
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContentCard(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Content Title',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              TextButton(
-                onPressed: () {},
-                child: const Text('Learn More'),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class AddContent extends StatelessWidget {
-  const AddContent({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.add_circle,
-            size: 100,
-            color: Colors.white.withOpacity(0.8),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Add New Content',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// class ChatContent extends StatelessWidget {
-//   const ChatContent({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Icon(
-//             Icons.chat_bubble_outline,
-//             size: 100,
-//             color: Colors.white.withOpacity(0.8),
-//           ),
-//           const SizedBox(height: 20),
-//           Text(
-//             'Chats',
-//             style: Theme.of(context).textTheme.headlineSmall,
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-class ProfileContent extends StatelessWidget {
-  const ProfileContent({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.person_outline,
-            size: 100,
-            color: Colors.white.withOpacity(0.8),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Profile',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-        ],
       ),
     );
   }

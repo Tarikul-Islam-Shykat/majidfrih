@@ -119,7 +119,7 @@ class LoginScreen extends StatelessWidget {
                                 final success =
                                     await loginController.loginUser();
                                 if (success) {
-                                  //   Get.toNamed(AppRoute.dashBoardScreen);
+                                  Get.offAndToNamed(AppRoute.dashBoardScreen);
                                 }
                               },
                         title: loginController.isLoginLoading.value

@@ -23,6 +23,10 @@ class EnhancedProductController extends GetxController {
   var selectedLanguage = 'English'.obs;
   var selectedCurrency = 'BDT'.obs;
 
+  var isSearching = false.obs;
+  var searchQuery = ''.obs;
+  var filteredProducts = <Product>[].obs;
+
   // Available options
   final List<String> availableCountries = [
     'United States', // USD
@@ -75,6 +79,27 @@ class EnhancedProductController extends GetxController {
   Future<void> initializeData() async {
     await loadExchangeRates();
     await loadProducts();
+  }
+
+  void searchProducts(String query) {
+    searchQuery.value = query;
+
+    if (query.isEmpty) {
+      filteredProducts.value = nearbyProducts;
+      isSearching.value = false;
+    } else {
+      isSearching.value = true;
+      filteredProducts.value = nearbyProducts
+          .where((product) =>
+              product.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+  }
+
+  void clearSearch() {
+    searchQuery.value = '';
+    isSearching.value = false;
+    filteredProducts.value = nearbyProducts;
   }
 
   Future<void> loadExchangeRates() async {
@@ -143,6 +168,9 @@ class EnhancedProductController extends GetxController {
         }
 
         nearbyProducts.value = products;
+        if (!isSearching.value) {
+          filteredProducts.value = products;
+        }
         debugPrint('Loaded ${products.length} products');
 
         // Apply translations after loading products

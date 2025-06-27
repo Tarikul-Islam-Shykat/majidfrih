@@ -143,6 +143,8 @@ class LoginController extends GetxController {
           backgroundColor: Colors.green,
         );
 
+        getProfileInfo();
+
         // Clear form after successful login
         clearForm();
 
@@ -185,7 +187,57 @@ class LoginController extends GetxController {
 
   // Auto-fill for testing (remove in production)
   void fillTestCredentials() {
-    emailController.text = "test@example.com";
+    emailController.text = "test@gmail.com";
     passwordController.text = "12345678";
+  }
+
+  Future<Map<String, dynamic>?> getProfileInfo() async {
+    try {
+      final Map<String, dynamic> requestBody = {};
+      final response = await _networkConfig.ApiRequestHandler(
+        RequestMethod.GET,
+        Urls.userPofile,
+        json.encode(requestBody),
+        is_auth: true,
+      );
+
+      if (response != null && response['success'] == true) {
+        log("getProfileInfo ${response.toString()}");
+
+        // final isCompleteProfile =
+        //     response['data']['userProfile']['isCompleteProfile'];
+        //    if (isCompleteProfile) {
+        final userService = LocalService();
+
+        //  final profileImage = response['data']['userProfile']['profileImage'];
+        //  final role = response['data']['userProfile']['role'];
+        final name = response['data']['userProfile']['fullName'];
+        final id = response['data']['userProfile']['id'];
+        //  final paymentStatus = response['data']['userProfile']['isPayment'];
+
+        // Store data locally
+        //  await userService.setImagePath(profileImage.toString());
+        await userService.setName(name);
+        //  await userService.setRole(role);
+        await userService.setUserId(id);
+        //  await userService.setPaymentStatus(paymentStatus);
+        //   }
+
+        return response; // Return full response
+      } else {
+        Fluttertoast.showToast(
+          msg: "Failed To Get Your Profile Info.",
+          backgroundColor: Colors.red,
+        );
+        return null;
+      }
+    } catch (e) {
+      log("getProfileInfo error: $e");
+      Fluttertoast.showToast(
+        msg: "Failed To Get Your Profile Info.",
+        backgroundColor: Colors.red,
+      );
+      return null;
+    }
   }
 }

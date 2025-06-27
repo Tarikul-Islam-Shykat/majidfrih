@@ -1,12 +1,10 @@
 // lib/screens/post_screen.dart
 
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:prettyrini/core/const/app_colors.dart';
-import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
 import 'package:prettyrini/feature/auth/widget/text_field_widget.dart';
 import 'package:prettyrini/feature/post/CONTROLLER/post_controller.dart';
@@ -43,7 +41,16 @@ class _PostScreenState extends State<PostScreen> {
               // Content
               Column(
                 children: [
+                  SizedBox(height: 60),
+                  Text(
+                    "Post Content",
+                    style: GoogleFonts.poppins(
+                        color: Colors.white,
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold),
+                  ),
                   SizedBox(height: 20),
+
                   Column(
                     children: [
                       // Image selection container
@@ -266,8 +273,10 @@ class _PostScreenState extends State<PostScreen> {
                                       colors[index % colors.length];
 
                                   return GestureDetector(
-                                    onTap: () => postController
-                                        .onCountryChanged(country),
+                                    onTap: () {
+                                      setState(() {});
+                                      postController.onCountryChanged(country);
+                                    },
                                     child: Container(
                                       width: 160,
                                       margin: EdgeInsets.only(right: 12),

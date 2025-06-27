@@ -19,9 +19,9 @@ class NetworkConfig {
     if (await InternetConnectionChecker().hasConnection) {
       var header = <String, String>{"Content-type": "application/json"};
       if (is_auth == true) {
-        //  header["Authorization"] = "Bearer ${sh.getString("token")}";
-        header["Authorization"] =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTdmODg4MmU0NGY3NDMyMGEyZTM1ZCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDY3NzM2NywiZXhwIjoxNzUzMjY5MzY3fQ.fNkHI5cI7-kN_q3xRMgNzDAGTlzOzsc-ajr9bybsWco";
+        header["Authorization"] = "${sh.getString("token")}";
+        // header["Authorization"] =
+        //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTdmODg4MmU0NGY3NDMyMGEyZTM1ZCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDY3NzM2NywiZXhwIjoxNzUzMjY5MzY3fQ.fNkHI5cI7-kN_q3xRMgNzDAGTlzOzsc-ajr9bybsWco";
       }
 
       if (method.name == RequestMethod.GET.name) {

@@ -4,7 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
-import 'package:prettyrini/feature/dashboard/ui/dashboard.dart';
+import 'package:prettyrini/route/route.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/const/app_colors.dart';
 
@@ -57,8 +57,9 @@ class MyApp extends StatelessWidget {
               brightness: Brightness.dark,
               primaryColor: Colors.blueAccent,
             ),
-            // getPages: AppRoute.routes,
-            // initialRoute: AppRoute.splashScreen,
+            getPages: AppRoute.routes,
+            initialRoute: AppRoute.splashScreen,
+            //  home: NewPasswordScreen(),
             builder: (context, child) {
               child = EasyLoading.init()(context, child);
               return MediaQuery(
@@ -68,7 +69,7 @@ class MyApp extends StatelessWidget {
                 child: child,
               );
             },
-            home: DashboardScreen(),
+            //  home: DashboardScreen(),
             // home: PostScreen(),
             // home: WelcomeScreen(),
             // home: OtpVeryScreen(),

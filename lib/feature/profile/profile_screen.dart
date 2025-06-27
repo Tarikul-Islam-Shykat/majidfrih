@@ -10,6 +10,7 @@ import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
 import 'package:prettyrini/feature/profile/widget/profile_widget.dart';
+import 'package:prettyrini/route/route.dart';
 
 class ProfileScreen extends StatelessWidget {
   // Get the ThemeController instance
@@ -134,13 +135,15 @@ class ProfileScreen extends StatelessWidget {
 
                     // Logout
                     SettingsMenuItem(
-                      icon: Icons.logout,
-                      text: 'Logout',
-                      itemType: SettingsItemType.danger,
-                      textColor: Colors.red,
-                      iconColor: Colors.red,
-                      onTap: () => log('Logout tapped'),
-                    ),
+                        icon: Icons.logout,
+                        text: 'Logout',
+                        itemType: SettingsItemType.danger,
+                        textColor: Colors.red,
+                        iconColor: Colors.red,
+                        onTap: () {
+                          Get.offAllNamed(AppRoute.loginScreen);
+                          //   log('Logout tapped');
+                        }),
                   ],
                 ),
               ),

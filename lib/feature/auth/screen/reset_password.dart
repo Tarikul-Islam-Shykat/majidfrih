@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:prettyrini/core/const/widget.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
 import 'package:prettyrini/feature/auth/controller/reset_password_controller.dart';
+import 'package:prettyrini/feature/auth/screen/otp_very_screen.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
 import 'package:prettyrini/feature/auth/widget/text_field_widget.dart';
 import 'package:prettyrini/route/route.dart';
@@ -81,7 +82,10 @@ class ResetPassword extends StatelessWidget {
                                 final success = await resetPasswordController
                                     .resetPassword();
                                 if (success) {
-                                  // Navigate to OTP screen or back to login
+                                  Get.to(() => OtpVeryScreen(), arguments: {
+                                    'email': resetPasswordController
+                                        .emailController.value,
+                                  });
                                   Get.toNamed(AppRoute.otpScreen);
                                 }
                               },

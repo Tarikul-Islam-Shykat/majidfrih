@@ -64,7 +64,6 @@ class ProductHomeScreen extends StatelessWidget {
 
   Widget _buildLocationLanguageSelector(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.all(12.w),
@@ -75,31 +74,8 @@ class ProductHomeScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Country/Currency and Language Selectors
-          // _buildNarrowScreenSelectors(),
-          // screenWidth > 600
-          //     ? _buildWideScreenSelectors()
-          //     : _buildNarrowScreenSelectors(),
           _buildCountryDropdown(),
-          // Currency Display
           SizedBox(height: 8.h),
-          // Obx(() => Container(
-          //       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-          //       decoration: BoxDecoration(
-          //         color: AppColors.primaryColor.withOpacity(0.2),
-          //         borderRadius: BorderRadius.circular(20.r),
-          //         border: Border.all(
-          //             color: AppColors.primaryColor.withOpacity(0.5)),
-          //       ),
-          //       child: Text(
-          //         'Currency: ${productController.selectedCurrency.value}',
-          //         style: GoogleFonts.poppins(
-          //           color: Colors.white,
-          //           fontSize: 12.sp,
-          //           fontWeight: FontWeight.w500,
-          //         ),
-          //       ),
-          //     )),
         ],
       ),
     );
@@ -284,7 +260,9 @@ class ProductHomeScreen extends StatelessWidget {
                           color: Colors.white,
                           size: 20.w,
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          _showSearchDialog(context);
+                        },
                       ),
                     ),
                   ],
@@ -303,9 +281,14 @@ class ProductHomeScreen extends StatelessWidget {
                     crossAxisSpacing: 16.w,
                     mainAxisSpacing: 16.h,
                   ),
-                  itemCount: productController.nearbyProducts.length,
+                  //  itemCount: productController.nearbyProducts.length,
+                  itemCount: productController.isSearching.value
+                      ? productController.filteredProducts.length
+                      : productController.nearbyProducts.length,
                   itemBuilder: (context, index) {
-                    final product = productController.nearbyProducts[index];
+                    final product = productController.isSearching.value
+                        ? productController.filteredProducts[index]
+                        : productController.nearbyProducts[index];
                     return EnhancedProductCard(
                       product: product,
                       controller: productController,
@@ -319,6 +302,53 @@ class ProductHomeScreen extends StatelessWidget {
             SizedBox(height: 80.h), // Space for bottom navigation
           ],
         ),
+      ),
+    );
+  }
+
+  void _showSearchDialog(BuildContext context) {
+    final TextEditingController searchController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: Text(
+          'Search Products',
+          style: GoogleFonts.poppins(color: Colors.white),
+        ),
+        content: TextField(
+          controller: searchController,
+          style: GoogleFonts.poppins(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: 'Enter product name...',
+            hintStyle: GoogleFonts.poppins(color: Colors.grey),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: AppColors.primaryColor),
+            ),
+          ),
+          onChanged: (value) {
+            productController.searchProducts(value);
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              productController.clearSearch();
+              Navigator.pop(context);
+            },
+            child:
+                Text('Clear', style: GoogleFonts.poppins(color: Colors.grey)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Done',
+                style: GoogleFonts.poppins(color: AppColors.primaryColor)),
+          ),
+        ],
       ),
     );
   }
