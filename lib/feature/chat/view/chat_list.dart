@@ -68,7 +68,7 @@ class _UserChatListScreenState extends State<UsersChatList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryColor,
+      backgroundColor: AppColors.blackColor,
       body: RefreshIndicator(
         onRefresh: () => _chatController.refreshUserList(),
         child: Padding(
@@ -208,7 +208,7 @@ class _UserChatListScreenState extends State<UsersChatList> {
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: AppColors.primaryColor),
+      decoration: BoxDecoration(color: AppColors.blackColor),
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       child: Column(
         children: [

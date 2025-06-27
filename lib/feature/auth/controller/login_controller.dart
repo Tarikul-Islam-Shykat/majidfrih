@@ -144,8 +144,6 @@ class LoginController extends GetxController {
         );
 
         getProfileInfo();
-
-        // Clear form after successful login
         clearForm();
 
         return true;
@@ -187,8 +185,8 @@ class LoginController extends GetxController {
 
   // Auto-fill for testing (remove in production)
   void fillTestCredentials() {
-    emailController.text = "test@gmail.com";
-    passwordController.text = "12345678";
+    emailController.text = "test1234@gmail.com";
+    passwordController.text = "123456789";
   }
 
   Future<Map<String, dynamic>?> getProfileInfo() async {
@@ -201,6 +199,8 @@ class LoginController extends GetxController {
         is_auth: true,
       );
 
+      log("getProfileInfo ${response.toString()}");
+
       if (response != null && response['success'] == true) {
         log("getProfileInfo ${response.toString()}");
 
@@ -209,19 +209,13 @@ class LoginController extends GetxController {
         //    if (isCompleteProfile) {
         final userService = LocalService();
 
-        //  final profileImage = response['data']['userProfile']['profileImage'];
-        //  final role = response['data']['userProfile']['role'];
-        final name = response['data']['userProfile']['fullName'];
-        final id = response['data']['userProfile']['id'];
-        //  final paymentStatus = response['data']['userProfile']['isPayment'];
+        final profileImage = response['data']['profileImage'];
+        final name = response['data']['fullName'];
+        final id = response['data']['id'];
 
-        // Store data locally
-        //  await userService.setImagePath(profileImage.toString());
+        await userService.setImagePath(profileImage.toString());
         await userService.setName(name);
-        //  await userService.setRole(role);
         await userService.setUserId(id);
-        //  await userService.setPaymentStatus(paymentStatus);
-        //   }
 
         return response; // Return full response
       } else {

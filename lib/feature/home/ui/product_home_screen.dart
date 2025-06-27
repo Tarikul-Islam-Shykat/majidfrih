@@ -38,7 +38,11 @@ class ProductHomeScreen extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                buildAppBar("Jenny", textColor: Colors.white),
+                Obx(
+                  () => buildAppBar(productController.nameObs.value,
+                      productController.profileImageObs.value,
+                      textColor: Colors.white),
+                ),
                 const SizedBox(height: 10),
                 _buildLocationLanguageSelector(context),
                 const SizedBox(height: 20),

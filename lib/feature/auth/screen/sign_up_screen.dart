@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +13,7 @@ import 'package:prettyrini/feature/auth/screen/forget_pasword_screen.dart';
 import 'package:prettyrini/feature/auth/screen/reset_password.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
 import 'package:prettyrini/feature/auth/widget/text_field_widget.dart';
+import 'package:prettyrini/feature/profile_setUp/ui/profile_setup_ui.dart';
 import 'package:prettyrini/route/route.dart';
 
 import '../../../core/const/app_colors.dart';
@@ -220,7 +223,15 @@ class SignUpScreen extends StatelessWidget {
                                 final success =
                                     await signUpController.signUpUser();
                                 if (success) {
-                                  Get.toNamed(AppRoute.loginScreen);
+                                  String email =
+                                      signUpController.emailController.text;
+                                  String phoneNumber =
+                                      signUpController.phoneController.text;
+                                  log(email);
+                                  Get.to(ProfileEditScreen(), arguments: {
+                                    'email': email,
+                                    'number': phoneNumber,
+                                  });
                                 }
                               },
                         title: signUpController.isSignUpLoading.value

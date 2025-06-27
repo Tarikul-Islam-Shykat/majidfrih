@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:prettyrini/core/network_caller/endpoints.dart';
 import 'package:prettyrini/core/network_caller/network_config.dart';
+import 'package:prettyrini/core/services_class/user_info.dart';
 import 'package:prettyrini/feature/home/model/product_model.dart';
 import 'package:prettyrini/feature/home/service/currency%20_service.dart';
 
@@ -74,6 +75,17 @@ class EnhancedProductController extends GetxController {
   void onInit() {
     super.onInit();
     initializeData();
+    loadData();
+  }
+
+  var nameObs = "".obs;
+  var profileImageObs = "".obs;
+  loadData() async {
+    var service = LocalService();
+    var name = await service.getName();
+    var profileImage = await service.getImagePath();
+    nameObs.value = name;
+    profileImageObs.value = profileImage;
   }
 
   Future<void> initializeData() async {

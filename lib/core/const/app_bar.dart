@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
+import 'package:prettyrini/core/global_widegts/network_image.dart';
 
-Widget buildAppBar(String username, {required Color textColor}) {
+Widget buildAppBar(String username, String imaegPath,
+    {required Color textColor}) {
   final ThemeController themeController = Get.find<ThemeController>();
   final bool isDarkMode = themeController.isDarkMode;
   return Padding(
@@ -17,14 +18,14 @@ Widget buildAppBar(String username, {required Color textColor}) {
       children: [
         Row(
           children: [
-            Container(
-              width: 56.w,
-              height: 56.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: textColor.withOpacity(0.2),
-              ),
-              child: Image.asset(ImagePath.profile),
+            ResponsiveNetworkImage(
+              imageUrl: imaegPath,
+              shape: ImageShape.roundedRectangle,
+              borderRadius: 12,
+              widthPercent: 0.15,
+              heightPercent: 0.08,
+              fit: BoxFit.cover,
+              placeholderWidget: CircularProgressIndicator(),
             ),
             const SizedBox(width: 12),
             Column(

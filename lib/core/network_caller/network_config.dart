@@ -28,8 +28,7 @@ class NetworkConfig {
         try {
           var req = await http.get(Uri.parse(url), headers: header);
 
-          log(req.body);
-          if (req.statusCode == 200) {
+          if (req.statusCode == 200 || req.statusCode == 201) {
             return json.decode(req.body);
           } else {
             throw Exception("Server Error");

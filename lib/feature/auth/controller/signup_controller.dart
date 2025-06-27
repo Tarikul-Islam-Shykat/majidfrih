@@ -43,7 +43,7 @@ class SignUpController extends GetxController {
 
   @override
   void onClose() {
-    emailController.dispose();
+    //  emailController.dispose();
     passwordController.dispose();
     phoneController.dispose();
     super.onClose();
@@ -225,9 +225,9 @@ class SignUpController extends GetxController {
 
   // Clear form method
   void clearForm() {
-    emailController.clear();
+    // emailController.clear();
     passwordController.clear();
-    phoneController.clear();
+    // phoneController.clear();
     isEmailValid.value = true;
     isPasswordValid.value = true;
     isPhoneValid.value = true;

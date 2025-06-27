@@ -9,6 +9,7 @@ import 'package:prettyrini/core/const/app_bar.dart';
 import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
+import 'package:prettyrini/feature/home/controller/product_controller.dart';
 import 'package:prettyrini/feature/profile/widget/profile_widget.dart';
 import 'package:prettyrini/route/route.dart';
 
@@ -17,7 +18,8 @@ class ProfileScreen extends StatelessWidget {
   final ThemeController themeController = Get.find<ThemeController>();
 
   ProfileScreen({super.key});
-
+  final EnhancedProductController productController =
+      Get.put(EnhancedProductController());
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -44,7 +46,11 @@ class ProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    buildAppBar("Jenny", textColor: iconTextColor),
+                    Obx(
+                      () => buildAppBar(productController.nameObs.value,
+                          productController.profileImageObs.value,
+                          textColor: Colors.white),
+                    ),
                     const SizedBox(height: 20),
 
                     Container(
