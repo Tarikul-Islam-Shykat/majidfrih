@@ -84,8 +84,8 @@ class EnhancedProductController extends GetxController {
     var service = LocalService();
     var name = await service.getName();
     var profileImage = await service.getImagePath();
-    nameObs.value = name;
-    profileImageObs.value = profileImage;
+    nameObs.value = name ?? "No Value Found";
+    profileImageObs.value = profileImage ?? "No Value Found";
   }
 
   Future<void> initializeData() async {

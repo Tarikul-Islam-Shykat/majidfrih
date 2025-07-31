@@ -8,6 +8,7 @@ import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
 import 'package:prettyrini/feature/auth/widget/text_field_widget.dart';
 import 'package:prettyrini/feature/post/CONTROLLER/post_controller.dart';
+import 'package:prettyrini/feature/post/model/city_model.dart';
 
 class PostScreen extends StatefulWidget {
   PostScreen({Key? key}) : super(key: key);
@@ -390,7 +391,259 @@ class _PostScreenState extends State<PostScreen> {
                       ),
 
                       SizedBox(height: 20),
+// Add this widget after the Country selection and before Product Name field
+// Replace SizedBox(height: 20), with this complete city selection section
 
+// City Selection with Search
+                      Container(
+                        margin: EdgeInsets.only(bottom: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 5, bottom: 12),
+                              child: Text(
+                                "Select City",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+
+                            Obx(() {
+                              if (postController.isCityLoading.value) {
+                                return Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "Loading cities...",
+                                        style: TextStyle(
+                                            color: Colors.grey.shade600),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+
+                              if (postController.cities.isEmpty) {
+                                return Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.info_outline,
+                                          color: Colors.grey.shade600),
+                                      SizedBox(width: 10),
+                                      Text(
+                                        "Select a country first to load cities",
+                                        style: TextStyle(
+                                            color: Colors.grey.shade600),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+
+                              return Column(
+                                children: [
+                                  // Search Field
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                    ),
+                                    child: TextField(
+                                      controller:
+                                          postController.citySearchController,
+                                      style: TextStyle(
+                                          color: Colors.black), // Add this line
+
+                                      decoration: InputDecoration(
+                                        hintText: 'Search cities...',
+                                        prefixIcon: Icon(Icons.search,
+                                            color: Colors.grey.shade600),
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 12),
+                                      ),
+                                      onChanged: (value) {
+                                        postController.filterCities(value);
+                                      },
+                                    ),
+                                  ),
+
+                                  SizedBox(height: 10),
+
+                                  // City Dropdown
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                    ),
+                                    child: DropdownButtonFormField<CityModel>(
+                                      value: postController.selectedCity.value,
+                                      decoration: InputDecoration(
+                                        labelText: postController
+                                                .selectedCity.value?.name ??
+                                            'Select City',
+                                        labelStyle: TextStyle(
+                                            color: Colors.grey.shade600),
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 15, vertical: 12),
+                                        prefixIcon: Icon(Icons.location_city,
+                                            color: Colors.grey.shade600),
+                                      ),
+                                      dropdownColor: Colors.white,
+                                      isExpanded: true,
+                                      menuMaxHeight:
+                                          200, // Limit dropdown height
+                                      icon: Icon(Icons.keyboard_arrow_down),
+                                      items: postController.filteredCities
+                                          .map((CityModel city) {
+                                        return DropdownMenuItem<CityModel>(
+                                          value: city,
+                                          child: Container(
+                                            width: double.infinity,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  city.name,
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 14,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                // SizedBox(height: 2),
+                                                // Text(
+                                                //   "Code: ${city.isoCode}",
+                                                //   style: TextStyle(
+                                                //     color: Colors.grey.shade600,
+                                                //     fontSize: 11,
+                                                //   ),
+                                                // ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (CityModel? newValue) {
+                                        postController.selectedCity.value =
+                                            newValue;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
+
+                            // Show selected city info if applicable
+                            Obx(() {
+                              if (postController.selectedCity.value != null) {
+                                return Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.blue.shade100,
+                                        Colors.blue.shade50
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border:
+                                        Border.all(color: Colors.blue.shade300),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.blue.withOpacity(0.1),
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(6),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(Icons.location_on,
+                                            color: Colors.white, size: 16),
+                                      ),
+                                      SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Selected City",
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.blue.shade800,
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Text(
+                                              "${postController.selectedCity.value!.name} (${postController.selectedCity.value!.isoCode})",
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.blue.shade700,
+                                                fontSize: 11.sp,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                              return SizedBox();
+                            }),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: 20),
                       // Product Name
                       CustomAuthField(
                         controller: postController.productNameController,

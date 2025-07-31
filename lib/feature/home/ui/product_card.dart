@@ -105,6 +105,28 @@ class EnhancedProductCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    product.cityName!.isNotEmpty
+                        ? Positioned(
+                            top: 30.h,
+                            right: 8.w,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w, vertical: 4.h),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryColor.withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Text(
+                                product.cityName.toString(),
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink(),
                   ],
                 ),
               ),

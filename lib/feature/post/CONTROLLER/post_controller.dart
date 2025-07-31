@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:prettyrini/core/services_class/user_info.dart';
+import 'package:prettyrini/feature/post/model/city_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:prettyrini/core/network_caller/endpoints.dart';
 import 'package:prettyrini/core/network_caller/network_config.dart';
@@ -95,22 +96,58 @@ class PostController extends GetxController {
   }
 
   @override
+  @override
   void onClose() {
     productNameController.dispose();
     productPriceController.dispose();
     productDescriptionController.dispose();
+    citySearchController.dispose(); // Add this line
     super.onClose();
   }
 
   // Update currency when country changes
+  // void onCountryChanged(String country) {
+  //   selectedCountry.value = country;
+  //   updateCurrency();
+  // }
+
   void onCountryChanged(String country) {
     selectedCountry.value = country;
     updateCurrency();
+
+    // Clear previous city selection
+    selectedCity.value = null;
+    cities.clear();
+    filteredCities.clear();
+    citySearchController.clear();
+
+    // Get country code and fetch cities
+    String countryCode = getCountryCode(country);
+    if (countryCode.isNotEmpty) {
+      fetchCities(countryCode);
+    }
   }
 
   void updateCurrency() {
     selectedCurrency.value = countryCurrencyMap[selectedCountry.value] ?? 'BDT';
     currencySymbol.value = currencySymbols[selectedCurrency.value] ?? '৳';
+  }
+
+  Future<void> fetchCitites(String countryCode) async {
+    try {
+      final response = await _networkConfig.ApiRequestHandler(
+        RequestMethod.GET,
+        '${Urls.baseUrl}/product/get-city-base-country?countryCode=$countryCode',
+        null,
+        is_auth: true,
+      );
+
+      log("Categories Response: $response");
+
+      if (response['success'] == true) {
+      } else {}
+    } catch (e) {
+    } finally {}
   }
 
   // Fetch categories from API
@@ -177,6 +214,7 @@ class PostController extends GetxController {
           "countryName": selectedCountry.value,
           "categoryId": selectedCategory.value?.id,
           "moneyCode": selectedCurrency.value,
+          "cityName": selectedCity.value?.name ?? '',
           "description": productDescriptionController.text.trim(),
         }),
       };
@@ -262,7 +300,6 @@ class PostController extends GetxController {
       return false;
     }
 
-    // Validate if price is a valid number
     if (double.tryParse(productPriceController.text.trim()) == null) {
       errorMessage.value = 'Please enter a valid price';
       Get.snackbar('Error', errorMessage.value);
@@ -281,6 +318,12 @@ class PostController extends GetxController {
       return false;
     }
 
+    if (selectedCity.value == null) {
+      errorMessage.value = 'Please select a city';
+      Get.snackbar('Error', errorMessage.value);
+      return false;
+    }
+
     return true;
   }
 
@@ -288,9 +331,13 @@ class PostController extends GetxController {
     productNameController.clear();
     productPriceController.clear();
     productDescriptionController.clear();
+    citySearchController.clear();
     selectedCategory.value = null;
+    selectedCity.value = null;
     selectedCountry.value = 'Bangladesh';
     selectedImage.value = null;
+    cities.clear();
+    filteredCities.clear();
     updateCurrency();
   }
 
@@ -377,6 +424,99 @@ class PostController extends GetxController {
       ),
     );
   }
+
+  // Add these properties to your PostController class
+
+// Cities
+  var cities = <CityModel>[].obs;
+  var selectedCity = Rxn<CityModel>();
+  var isCityLoading = false.obs;
+  var filteredCities = <CityModel>[].obs;
+  var citySearchController = TextEditingController();
+
+// Add this to onClose() method
+
+// Add these methods to your PostController class
+
+// Fetch cities based on country code
+  Future<void> fetchCities(String countryCode) async {
+    try {
+      isCityLoading.value = true;
+
+      log("Fetching cities for country code: $countryCode");
+
+      final response = await _networkConfig.ApiRequestHandler(
+        RequestMethod.GET,
+        '${Urls.baseUrl}/product/get-city-base-country?countryCode=$countryCode',
+        null,
+        is_auth: true,
+      );
+
+      log("Cities Response: $response");
+
+      if (response['success'] == true) {
+        final List<dynamic> cityData = response['data'];
+        cities.value =
+            cityData.map((json) => CityModel.fromJson(json)).toList();
+        filteredCities.value = cities.value;
+
+        log("Cities loaded: ${cities.length}");
+      } else {
+        errorMessage.value = response['message'] ?? 'Failed to load cities';
+      }
+    } catch (e) {
+      log("Error fetching cities: $e");
+      errorMessage.value = 'Error loading cities: $e';
+    } finally {
+      isCityLoading.value = false;
+    }
+  }
+
+// Filter cities based on search query
+  void filterCities(String query) {
+    if (query.isEmpty) {
+      filteredCities.value = cities.value;
+    } else {
+      filteredCities.value = cities.value
+          .where(
+              (city) => city.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+  }
+
+// Update onCountryChanged method
+
+// Helper method to get country code from country name
+  String getCountryCode(String countryName) {
+    final Map<String, String> countryCodeMap = {
+      'United States': 'US',
+      'Bangladesh': 'BD',
+      'United Kingdom': 'GB',
+      'France': 'FR',
+      'Germany': 'DE',
+      'Japan': 'JP',
+      'Canada': 'CA',
+      'Australia': 'AU',
+      'India': 'IN',
+      'China': 'CN',
+      'Brazil': 'BR',
+      'Russia': 'RU',
+      'South Korea': 'KR',
+      'Mexico': 'MX',
+      'Turkey': 'TR',
+      'Saudi Arabia': 'SA',
+      'United Arab Emirates': 'AE',
+      'Switzerland': 'CH',
+      'Norway': 'NO',
+      'Sweden': 'SE',
+    };
+
+    return countryCodeMap[countryName] ?? '';
+  }
+
+// Update validation method
+
+// Update clearForm method
 }
 
 // Category Model

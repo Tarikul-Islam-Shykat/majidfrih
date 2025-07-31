@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:prettyrini/core/const/theme_toggle_button.dart';
 import 'package:prettyrini/core/const/widget.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
+import 'package:prettyrini/feature/auth/controller/about%20_controlleer.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
 import 'package:prettyrini/route/route.dart';
 
@@ -20,7 +21,9 @@ class WelcomeScreen extends StatelessWidget {
 
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final AboutUsController controller2 = Get.put(AboutUsController());
+    });
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       body: Stack(

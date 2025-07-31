@@ -11,25 +11,22 @@ import 'package:prettyrini/feature/home/ui/product_home_screen.dart';
 import 'package:prettyrini/feature/post/ui/post_ui.dart';
 import 'package:prettyrini/feature/profile/profile_screen.dart';
 
-// Navigation Controller
-
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find<ThemeController>();
     final isDarkMode = themeController.isDarkMode;
-    // Initialize the controller
     final NavigationController navController = Get.put(NavigationController());
     final ChatController chatController = Get.put(ChatController());
 
-    // List of screens
     final List<Widget> screens = [
       ProductHomeScreen(),
       PostScreen(),
       UsersChatList(),
       ProfileScreen(),
     ];
+
     return Scaffold(
       body: Stack(
         children: [

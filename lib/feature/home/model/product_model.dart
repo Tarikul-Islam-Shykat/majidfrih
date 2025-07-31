@@ -18,6 +18,7 @@ class Product {
   final String? translatedDescription;
   final bool isFavorite;
   final String? description;
+  final String? cityName;
 
   // Currency conversion fields
   final String? originalCurrency;
@@ -28,6 +29,7 @@ class Product {
     required this.name,
     required this.price,
     required this.countryName,
+    required this.cityName,
     required this.image,
     required this.categoryId,
     required this.createdAt,
@@ -53,6 +55,8 @@ class Product {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       category: Category.fromJson(json['category']),
+      cityName: json['cityName'],
+
       user:
           json['user'] != null ? User.fromJson(json['user']) : null, // ✅ added
       description: json['description'],
@@ -75,6 +79,7 @@ class Product {
       'user': user?.toJson(), // ✅ added
       'description': description,
       'isFavorite': isFavorite,
+      'cityName': cityName,
       'moneyCode': originalCurrency,
       'translatedName': translatedName,
       'translatedDescription': translatedDescription,
@@ -91,6 +96,7 @@ class Product {
     DateTime? createdAt,
     DateTime? updatedAt,
     Category? category,
+    String? cityName,
     User? user, // ✅ added
     String? translatedName,
     String? translatedDescription,
@@ -104,6 +110,9 @@ class Product {
       name: name ?? this.name,
       price: price ?? this.price,
       countryName: countryName ?? this.countryName,
+
+      cityName: cityName ?? this.cityName,
+
       image: image ?? this.image,
       categoryId: categoryId ?? this.categoryId,
       createdAt: createdAt ?? this.createdAt,
