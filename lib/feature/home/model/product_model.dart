@@ -1,5 +1,4 @@
 // lib/models/enhanced_product_model.dart
-
 class Product {
   final String id;
   final String name;
@@ -11,15 +10,18 @@ class Product {
   final DateTime updatedAt;
   final Category category;
 
+  // New user field
+  final User? user;
+
   // Enhanced fields for localization
   final String? translatedName;
   final String? translatedDescription;
   final bool isFavorite;
-  final String? description; // Optional description field
+  final String? description;
 
   // Currency conversion fields
   final String? originalCurrency;
-  final Map<String, double>? convertedPrices; // Cache for converted prices
+  final Map<String, double>? convertedPrices;
 
   Product({
     required this.id,
@@ -31,11 +33,12 @@ class Product {
     required this.createdAt,
     required this.updatedAt,
     required this.category,
+    this.user, // ✅ added
     this.translatedName,
     this.translatedDescription,
     this.isFavorite = false,
     this.description,
-    this.originalCurrency, // Default to USD
+    this.originalCurrency,
     this.convertedPrices,
   });
 
@@ -50,7 +53,9 @@ class Product {
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
       category: Category.fromJson(json['category']),
-      description: json['description'], // Optional field
+      user:
+          json['user'] != null ? User.fromJson(json['user']) : null, // ✅ added
+      description: json['description'],
       isFavorite: json['isFavorite'] ?? false,
       originalCurrency: json['moneyCode'],
     );
@@ -67,6 +72,7 @@ class Product {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'category': category.toJson(),
+      'user': user?.toJson(), // ✅ added
       'description': description,
       'isFavorite': isFavorite,
       'moneyCode': originalCurrency,
@@ -85,6 +91,7 @@ class Product {
     DateTime? createdAt,
     DateTime? updatedAt,
     Category? category,
+    User? user, // ✅ added
     String? translatedName,
     String? translatedDescription,
     bool? isFavorite,
@@ -102,6 +109,7 @@ class Product {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       category: category ?? this.category,
+      user: user ?? this.user, // ✅ added
       translatedName: translatedName ?? this.translatedName,
       translatedDescription:
           translatedDescription ?? this.translatedDescription,
@@ -171,6 +179,39 @@ class Product {
 
     final symbol = currencySymbols[currencyCode] ?? '$currencyCode ';
     return '$symbol ${amount.toStringAsFixed(2)}';
+  }
+}
+
+// ✅ Added User model
+class User {
+  final String id;
+  final String? fullName;
+  final String email;
+  final String? profileImage;
+
+  User({
+    required this.id,
+    this.fullName,
+    required this.email,
+    this.profileImage,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      fullName: json['fullName'],
+      email: json['email'],
+      profileImage: json['profileImage'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'fullName': fullName,
+      'email': email,
+      'profileImage': profileImage,
+    };
   }
 }
 

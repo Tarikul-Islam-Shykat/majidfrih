@@ -9,6 +9,8 @@ import 'package:prettyrini/core/const/app_bar.dart';
 import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/core/controller/theme_controller.dart';
+import 'package:prettyrini/feature/get_my_products/UI/my_products_page.dart';
+import 'package:prettyrini/feature/get_my_products/controller/get_my_controller.dart';
 import 'package:prettyrini/feature/home/controller/product_controller.dart';
 import 'package:prettyrini/feature/profile/widget/profile_widget.dart';
 import 'package:prettyrini/route/route.dart';
@@ -20,6 +22,7 @@ class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
   final EnhancedProductController productController =
       Get.put(EnhancedProductController());
+
   @override
   Widget build(BuildContext context) {
     return Obx(() {
@@ -104,12 +107,25 @@ class ProfileScreen extends StatelessWidget {
                     ),
 
                     // About
+                    // SettingsMenuItem(
+                    //   icon: Icons.info_outline,
+                    //   text: 'About',
+                    //   textColor: iconTextColor,
+                    //   iconColor: iconTextColor,
+                    //   onTap: () => log('About tapped'),
+                    // ),
+
                     SettingsMenuItem(
-                      icon: Icons.info_outline,
-                      text: 'About',
+                      icon: Icons.production_quantity_limits,
+                      text: 'My Products',
                       textColor: iconTextColor,
                       iconColor: iconTextColor,
-                      onTap: () => log('About tapped'),
+                      onTap: () {
+                        Get.to(MyProductsPage());
+                        // final MyProductsController myProductsController =
+                        //     Get.put(MyProductsController());
+                        // myProductsController.getProductsData();
+                      },
                     ),
 
                     // Terms and conditions

@@ -9,6 +9,7 @@ import 'package:prettyrini/core/const/app_bar.dart';
 import 'package:prettyrini/core/const/app_colors.dart';
 import 'package:prettyrini/core/const/image_path.dart';
 import 'package:prettyrini/feature/auth/widget/custom_booton_widget.dart';
+import 'package:prettyrini/feature/chat_v2/view/chat_screen.dart';
 import 'package:prettyrini/feature/home/controller/product_controller.dart';
 import 'package:prettyrini/feature/home/model/product_model.dart';
 
@@ -50,7 +51,14 @@ class ProductDetailScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: CustomButton(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(() => ChatScreenV2(
+                            name: product.user!.fullName!,
+                            receiverId: product.user!.id,
+                            imageUrl:
+                                "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D",
+                          ));
+                    },
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -139,28 +147,6 @@ class ProductDetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      // Wrap(
-                      //   spacing: 8.0,
-                      //   runSpacing: 8.0,
-                      //   children: product.category.map((category) {
-                      //     return Container(
-                      //       decoration: BoxDecoration(
-                      //         color: Colors.amber.withOpacity(0.1),
-                      //         borderRadius:
-                      //             BorderRadius.all(Radius.circular(30)),
-                      //       ),
-                      //       padding: EdgeInsets.symmetric(
-                      //           vertical: 6, horizontal: 12),
-                      //       child: Text(
-                      //         category,
-                      //         style: GoogleFonts.poppins(
-                      //           color: Colors.white,
-                      //           fontSize: 10.sp,
-                      //         ),
-                      //       ),
-                      //     );
-                      //   }).toList(),
-                      // ),
                     ],
                   ),
                 ],
@@ -194,6 +180,50 @@ class ProductDetailScreen extends StatelessWidget {
                       color: Colors.white,
                       fontSize: 14.sp,
                     ),
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(
+              height: 20,
+            ),
+            // Description
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Uploader Info",
+                style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: AppColors.primaryColor.withOpacity(0.1)),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Full name : ${product.user!.fullName.toString()}",
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                      Text(
+                        "Email : ${product.user!.email.toString()}",
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

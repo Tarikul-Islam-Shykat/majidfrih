@@ -208,6 +208,7 @@ class LoginController extends GetxController {
         //     response['data']['userProfile']['isCompleteProfile'];
         //    if (isCompleteProfile) {
         final userService = LocalService();
+        //   await userService.clearUserData();
 
         final profileImage = response['data']['profileImage'];
         final name = response['data']['fullName'];

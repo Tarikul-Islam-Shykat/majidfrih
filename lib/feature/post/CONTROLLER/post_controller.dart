@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:prettyrini/core/services_class/user_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:prettyrini/core/network_caller/endpoints.dart';
 import 'package:prettyrini/core/network_caller/network_config.dart';
@@ -190,8 +191,7 @@ class PostController extends GetxController {
       request.headers.addAll({
         'Content-Type': 'multipart/form-data',
         //  'Authorization': "$token",
-        'Authorization':
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NTdmODg4MmU0NGY3NDMyMGEyZTM1ZCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJyb2xlIjoiVVNFUiIsImlhdCI6MTc1MDY3NzM2NywiZXhwIjoxNzUzMjY5MzY3fQ.fNkHI5cI7-kN_q3xRMgNzDAGTlzOzsc-ajr9bybsWco"
+        'Authorization': token!
       });
 
       request.fields.addAll(dataFields);
