@@ -524,7 +524,7 @@ class CategoryModel {
   final String id;
   final String title;
   final bool isNeedToPay;
-  final int amount;
+  final double amount;
   final String moneyCode;
   final String createdAt;
   final String updatedAt;
@@ -544,7 +544,7 @@ class CategoryModel {
       id: json['id'] ?? '',
       title: json['title'] ?? '',
       isNeedToPay: json['isNeedToPay'] ?? false,
-      amount: json['amount'] ?? 0,
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
       moneyCode: json['moneyCode'] ?? '',
       createdAt: json['createdAt'] ?? '',
       updatedAt: json['updatedAt'] ?? '',

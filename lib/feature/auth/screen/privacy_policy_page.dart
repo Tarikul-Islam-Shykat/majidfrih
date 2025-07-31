@@ -112,7 +112,7 @@ class PrivacyPolicyPage extends StatelessWidget {
                             ),
                             SizedBox(height: 8),
                             Text(
-                              'Effective Date: 1 August 2025\nTimelify (Pty) Ltd - Registered in South Africa',
+                              'Effective Date: 1 August 2025\nHand To Hand- Registered in Franch',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Color(0xFF718096),
